@@ -17,4 +17,4 @@ for CIFAR10.
 Use DeepCave to analyse and
 Highlight these strengths.**
 
-*Other questions occuring during the project will also be discussed.*
+*Other questions raised during the project will also be discussed.*
