@@ -1,7 +1,8 @@
 # coding=utf-8
+# HPO for NAS project
 
 def run():
-    print("HPO for NAS")
+    print("running HPO for NAS...")
 
 
 if __name__ == '__main__':
