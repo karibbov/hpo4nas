@@ -1,1 +1,0 @@
-{"config": {"op_0": "Identity", "op_1": "Zero", "op_2": "ReLUConvBN1x1", "op_3": "Zero", "op_4": "AvgPool3x3", "op_5": "ReLUConvBN3x3"}, "score": -0.9298229522723724, "info": {"budget": 11.11111111111111}}

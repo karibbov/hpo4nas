@@ -133,3 +133,6 @@ NASLib/
 
 # Pycharm files
 .idea/
+
+# Redis backup files
+*.rdb

@@ -1,1 +1,0 @@
-{"config": {"op_0": "Zero", "op_1": "AvgPool3x3", "op_2": "Zero", "op_3": "ReLUConvBN3x3", "op_4": "ReLUConvBN1x1", "op_5": "Zero"}, "score": -0.8077358769751383, "info": {"budget": 11.11111111111111}}
