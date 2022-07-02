@@ -1,4 +1,4 @@
-import numpy as np
+﻿import numpy as np
 import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
 
@@ -6,26 +6,14 @@ from naslib.search_spaces import NasBench201SearchSpace
 from naslib.utils import get_dataset_api
 from naslib.search_spaces.core.query_metrics import Metric
 
-metric_to_nb201 = {
-    Metric.TRAIN_ACCURACY: "train_acc1es",
-    Metric.VAL_ACCURACY: "eval_acc1es",
-    Metric.TEST_ACCURACY: "eval_acc1es",
-    Metric.TRAIN_LOSS: "train_losses",
-    Metric.VAL_LOSS: "eval_losses",
-    Metric.TEST_LOSS: "eval_losses",
-    Metric.TRAIN_TIME: "train_times",
-    Metric.VAL_TIME: "eval_times",
-    Metric.TEST_TIME: "eval_times",
-    Metric.FLOPS: "flop",
-    Metric.LATENCY: "latency",
-    Metric.PARAMETERS: "params",
-    Metric.EPOCH: "epochs",
-}
 
 OP_NAMES = ["Identity", "Zero", "ReLUConvBN3x3", "ReLUConvBN1x1", "AvgPool3x3"]
 nasbench201_params = ['op_0', 'op_1', 'op_2', 'op_3', 'op_4', 'op_5']
-nasbenc201_optimal_results = {"cifar10_val_acc": 91.61, "cifar10_test_acc": 94.37, "cifar100_val_acc": 73.49,
-                              "cifar100_test_acc": 73.51, "imgnet_val_acc": 46.77, "imgnet_test_acc": 47.31}
+nasbenc201_optimal_results = {
+    "cifar10_val_acc": 91.61, "cifar10_test_acc": 94.37,
+    "cifar100_val_acc": 73.49, "cifar100_test_acc": 73.51,
+    "imgnet_val_acc": 46.77, "imgnet_test_acc": 47.31
+}
 
 
 def configure_nasbench201():
