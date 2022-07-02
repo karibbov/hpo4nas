@@ -1,5 +1,5 @@
 # How can we use HPO techniques to find optimal architectures?
-# The search space problem:
+## The search space problem:
 
 Let’s try to use SMAC, an automatic generic algorithm configuration tool, which can also optimize the hyperparameters for deep neural networks, to pick optimal architectures instead of the optimal hyperparameters for a specific architecture and dataset combination.
 
@@ -24,10 +24,8 @@ These would be the steps for using SMAC or some other HPO method utilizing confi
 To summarize, our goal is to use HPO to optimize a neural network’s architecture on a certain dataset. This poses a few problems, which can be tackled by defining two functions for converting between two different data structures. In short, there is a type mismatch in the search space that NASBench201 defines and in the one that the optimizer searches over.
 The dataset we will use is CIFAR10 at first. The found architecture should perform relatively well on another similar dataset, like ImageNet.
 
-# Comparing several optimizers and interpreting their results
+## Comparing several optimizers and interpreting their results
 
 In the following, the optimizers DEHB, SMAC, and RE will be compared. To help better understand the final results, we will use DeepCAVE.
 
 SMAC is the only optimizer that works out of the box with DeepCAVE. For the others we need to find a way to convert the outputs produced by these optimizers into a format interpretable by DeepCAVE.
-
-There are
