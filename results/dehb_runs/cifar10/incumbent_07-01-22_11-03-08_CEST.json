@@ -1,1 +1,0 @@
-{"config": {"op_0": "ReLUConvBN3x3", "op_1": "ReLUConvBN3x3", "op_2": "AvgPool3x3", "op_3": "ReLUConvBN1x1", "op_4": "Identity", "op_5": "ReLUConvBN3x3"}, "score": -0.9679992197183868, "info": {"train cost": 99.98, "budget": 100.0}}
