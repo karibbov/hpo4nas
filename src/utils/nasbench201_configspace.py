@@ -1,7 +1,7 @@
-import numpy as np
+﻿import numpy as np
 import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
-# from NASLib import naslib
+
 from naslib.search_spaces import NasBench201SearchSpace
 from naslib.utils import get_dataset_api
 from naslib.search_spaces.core.query_metrics import Metric
@@ -9,12 +9,18 @@ from naslib.search_spaces.core.query_metrics import Metric
 
 OP_NAMES = ["Identity", "Zero", "ReLUConvBN3x3", "ReLUConvBN1x1", "AvgPool3x3"]
 nasbench201_params = ['op_0', 'op_1', 'op_2', 'op_3', 'op_4', 'op_5']
+nasbenc201_optimal_results = {
+    "cifar10_val_acc": 91.61, "cifar10_test_acc": 94.37,
+    "cifar100_val_acc": 73.49, "cifar100_test_acc": 73.51,
+    "imgnet_val_acc": 46.77, "imgnet_test_acc": 47.31
+}
 
 
 def configure_nasbench201():
     """
-    Configures the configSpace for Nas-Bench-201
-    :return: configSpace object for Nas-Bench-201 search space
+    Creates the ConfigSpace for NAS-Bench-201
+
+    :return: ConfigSpace object for the NAS-Bench-201 search space
     """
     cs = CS.ConfigurationSpace()
     op_0 = CSH.CategoricalHyperparameter(nasbench201_params[0], choices=OP_NAMES)
@@ -27,10 +33,12 @@ def configure_nasbench201():
     cs.add_hyperparameters([op_0, op_1, op_2, op_3, op_4, op_5])
     return cs
 
+
 def configuration2op_indices(config):
     """
-    Given a NasBench201 configuration return operation indices for search space
-    :param config: a sample NasBench201 configuration
+    Given a NAS-Bench-201 configuration return operation indices for search space
+
+    :param config: a sample NAS-Bench-201 configuration sampled from the ConfigSpace
     :return: operation indices
     """
     print(config)
@@ -42,8 +50,9 @@ def configuration2op_indices(config):
 
 def sample_random_architecture(search_space, cs):
     """
+    Given a ConfigSpace, it samples a random architecture from the search space
 
-    :param graph: SearchSpace object (e.g. NasBench201SearchSpace)
+    :param search_space: Graph object (e.g. NasBench201SearchSpace)
     :param cs: ConfigurationSpace object for the given search space
     :return: Queryable SearchSpace object
     """
@@ -54,17 +63,15 @@ def sample_random_architecture(search_space, cs):
     return search_space
 
 
-# print(op_indices)
-
 def nasbench201_random_query(search_space, nasbench201_space, dataset):
     """
-    Samples a random configuration from Nas-Bench-201 and queries the evaluation results from the benchmark
-    :param search_space: NasBench201SearchSpace object
-    :param nasbench201_space: ConfigurationSpace object corresponding to nasbench201
-    :param dataset: dataset the sample is evaluated on
-    :return: validation_accuracy, training_time
-    """
+    Samples a random configuration from NAS-Bench-201 and queries the evaluation results from the benchmark
 
+    :param search_space: NasBench201SearchSpace object
+    :param nasbench201_space: ConfigSpace object corresponding to NAS-Bench-201
+    :param dataset: dataset the sample is evaluated on
+    :return: a tuple containing the validation accuracy and the training time
+    """
     sample_random_architecture(search_space, nasbench201_space)
     dataset_api = get_dataset_api(search_space='nasbench201', dataset=dataset)
     accuracy = search_space.query(Metric.VAL_ACCURACY, dataset=dataset, dataset_api=dataset_api)
@@ -73,9 +80,16 @@ def nasbench201_random_query(search_space, nasbench201_space, dataset):
     return accuracy, cost
 
 
-nasbench201_configspace = configure_nasbench201()
-naslib_space = NasBench201SearchSpace()
+def run_rs_on_nasbench201(dataset='cifar10'):
+    """
+    Randomly select an architecture from NASBench201 and query the accuracy & cost of it. Print the results to
+    console.
 
-accuracy, cost = nasbench201_random_query(naslib_space, nasbench201_configspace, 'cifar10')
-print(f"Val accuracy: {accuracy}")
-print(f"Training cost: {cost}")
+    :param dataset: the name of the dataset as a string (cifar10 by default)
+    """
+    nasbench201_configspace = configure_nasbench201()
+    naslib_space = NasBench201SearchSpace()
+    accuracy, cost = nasbench201_random_query(naslib_space, nasbench201_configspace, dataset)
+    print(f"Val accuracy: {accuracy}")
+    print(f"Training cost: {cost}")
+
