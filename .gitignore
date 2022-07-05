@@ -130,6 +130,7 @@ dmypy.json
 
 # External packages
 NASLib/
+NASLib/*
 
 # Pycharm files
 .idea/
