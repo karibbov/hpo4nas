@@ -131,6 +131,8 @@ dmypy.json
 # External packages
 NASLib/
 NASLib/*
+DeepCAVE/
+DeepCAVE/*
 
 # Pycharm files
 .idea/

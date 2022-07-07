@@ -23,17 +23,19 @@ logger = setup_logger(config.save + "/log.log")
 
 
 from naslib.optimizers import RegularizedEvolution as RE
+from naslib.optimizers import RandomSearch as RS
 
 # instantiate the optimizer object using the configuration file parameters
-optimizer = RE(config)
+optimizer = RS(config)
 
 
 
 from naslib.defaults.trainer import Trainer
+from src.utils.extended_Trainer import ExtendedTrainer
 
 # since the optimizer has parsed the information of the search space, we do not need to pass the search
 # space object to the trainer when instantiating it.
-trainer = Trainer(optimizer, config, lightweight_output=True)
+trainer = ExtendedTrainer(optimizer, config, lightweight_output=True)
 
 
 
@@ -45,6 +47,6 @@ dataset_api = get_dataset_api(config.search_space, config.dataset)
 # adapt the search space to the optimizer type
 optimizer.adapt_search_space(search_space, dataset_api=dataset_api)
 
-trainer.search()
+trainer.search(report_incumbent=False)
 
 

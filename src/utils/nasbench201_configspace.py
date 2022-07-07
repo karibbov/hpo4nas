@@ -1,12 +1,15 @@
 ﻿import numpy as np
 import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
+from ConfigSpace.configuration_space import Configuration
 
 from naslib.search_spaces import NasBench201SearchSpace
 from naslib.utils import get_dataset_api
 from naslib.search_spaces.core.query_metrics import Metric
 
+from typing import Iterable, List, Union, Dict
 
+# TODO: Convert this to a ConfigurationAdapter Class
 OP_NAMES = ["Identity", "Zero", "ReLUConvBN3x3", "ReLUConvBN1x1", "AvgPool3x3"]
 nasbench201_params = ['op_0', 'op_1', 'op_2', 'op_3', 'op_4', 'op_5']
 nasbenc201_optimal_results = {
@@ -63,6 +66,26 @@ def sample_random_architecture(search_space, cs):
     return search_space
 
 
+def op_indices2config(op_indices: Union[List[Union[int, str]], str]) -> Configuration:
+    """
+    Returns a configuration for nasbech201 configuration space, given operation indices
+
+    :param op_indices: Iterable of operation indices
+    :return: The configuration object corresponding to the op_indices
+    """
+    if isinstance(op_indices, str):
+        op_indices = list(op_indices)
+
+    cs = configure_nasbench201()
+
+    values = {nasbench201_params[idx]: OP_NAMES[int(value)] for idx, value in enumerate(op_indices)}
+    print(values)
+    config = Configuration(configuration_space=cs, values=values)
+    config.is_valid_configuration()
+
+    return config
+
+
 def nasbench201_random_query(search_space, nasbench201_space, dataset):
     """
     Samples a random configuration from NAS-Bench-201 and queries the evaluation results from the benchmark
@@ -92,4 +115,3 @@ def run_rs_on_nasbench201(dataset='cifar10'):
     accuracy, cost = nasbench201_random_query(naslib_space, nasbench201_configspace, dataset)
     print(f"Val accuracy: {accuracy}")
     print(f"Training cost: {cost}")
-
