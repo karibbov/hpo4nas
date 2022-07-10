@@ -1,0 +1,33 @@
+config_id: 0
+optimizer: 'rs'
+search_space: 'nasbench201'
+dataset: 'cifar10'
+seed: 42
+output_path_root: "results"
+
+optimizers:
+
+  rs:
+    rs_specific_config_should_go_here: None
+
+  dehb:
+    dehb_specific_config_should_go_here: None
+
+  re:
+    re_specific_config_should_go_here: None
+
+  smac:
+    smac_specific_config_should_go_here: None
+
+search_spaces:
+
+  nasbench201:
+    op_names: ["Identity", "Zero", "ReLUConvBN3x3", "ReLUConvBN1x1", "AvgPool3x3"]
+    params: ['op_0', 'op_1', 'op_2', 'op_3', 'op_4', 'op_5']
+    optimal_results:
+      - cifar10_val_acc: 91.61
+      - cifar10_test_acc: 94.37,
+      - cifar100_val_acc: 73.49
+      - cifar100_test_acc: 73.51,
+      - imgnet_val_acc: 46.77
+      - imgnet_test_acc: 47.31

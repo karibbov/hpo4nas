@@ -133,6 +133,7 @@ NASLib/
 NASLib/*
 DeepCAVE/
 DeepCAVE/*
+DEHB/
 
 # Pycharm files
 .idea/

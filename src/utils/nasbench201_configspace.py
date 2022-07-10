@@ -1,13 +1,19 @@
-﻿import numpy as np
+﻿"""
+This package defines basic ConfigSpace related utility functions.
+"""
+
+from pathlib import Path
+import numpy as np
 import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
 from ConfigSpace.configuration_space import Configuration
-
+from deepcave import Objective, Recorder
 from naslib.search_spaces import NasBench201SearchSpace
 from naslib.utils import get_dataset_api
 from naslib.search_spaces.core.query_metrics import Metric
+from typing import Iterable, List, Union
+from ConfigSpace.read_and_write import json as cs_json
 
-from typing import Iterable, List, Union, Dict
 
 # TODO: Convert this to a ConfigurationAdapter Class
 OP_NAMES = ["Identity", "Zero", "ReLUConvBN3x3", "ReLUConvBN1x1", "AvgPool3x3"]
@@ -17,6 +23,21 @@ nasbenc201_optimal_results = {
     "cifar100_val_acc": 73.49, "cifar100_test_acc": 73.51,
     "imgnet_val_acc": 46.77, "imgnet_test_acc": 47.31
 }
+
+
+def save_configspace(output_path: str, file_name: str, formatting="json"):
+    """
+    Saves configspace into a file under the directory specified by output path.
+
+    :param file_name: name of the file
+    :param formatting: the format to save configspace in
+    :param output_path: the path to the output
+    """
+    configspace = configure_nasbench201()
+    if formatting == "json":
+        Path(output_path, f"{file_name}.json").write_text(cs_json.write(configspace))
+    else:
+        raise NotImplementedError(f"'{formatting}' is not supported. Try json.")
 
 
 def configure_nasbench201():
@@ -86,16 +107,16 @@ def op_indices2config(op_indices: Union[List[Union[int, str]], str]) -> Configur
     return config
 
 
-def nasbench201_random_query(search_space, nasbench201_space, dataset):
+def nasbench201_random_query(search_space, configspace, dataset):
     """
     Samples a random configuration from NAS-Bench-201 and queries the evaluation results from the benchmark
 
     :param search_space: NasBench201SearchSpace object
-    :param nasbench201_space: ConfigSpace object corresponding to NAS-Bench-201
+    :param configspace: ConfigSpace object corresponding to the search space
     :param dataset: dataset the sample is evaluated on
     :return: a tuple containing the validation accuracy and the training time
     """
-    sample_random_architecture(search_space, nasbench201_space)
+    sample_random_architecture(search_space, configspace)
     dataset_api = get_dataset_api(search_space='nasbench201', dataset=dataset)
     accuracy = search_space.query(Metric.VAL_ACCURACY, dataset=dataset, dataset_api=dataset_api)
     cost = search_space.query(Metric.TRAIN_TIME, dataset=dataset, dataset_api=dataset_api)
@@ -103,15 +124,32 @@ def nasbench201_random_query(search_space, nasbench201_space, dataset):
     return accuracy, cost
 
 
-def run_rs_on_nasbench201(dataset='cifar10'):
+def run_rs(dataset='cifar10', output_path=None, budgets=Iterable[int], n_models_per_budget=1):
     """
-    Randomly select an architecture from NASBench201 and query the accuracy & cost of it. Print the results to
-    console.
+    Run random search on the search space where a specified number of models are trained on different budgets and
+    output the results in the DeepCAVE format.
 
+    :param n_models_per_budget: number of picked architectures to evaluate per each budget
+    :param budgets: a list of budgets
+    :param output_path: the path to the output produced by deepcave
     :param dataset: the name of the dataset as a string (cifar10 by default)
     """
-    nasbench201_configspace = configure_nasbench201()
-    naslib_space = NasBench201SearchSpace()
-    accuracy, cost = nasbench201_random_query(naslib_space, nasbench201_configspace, dataset)
-    print(f"Val accuracy: {accuracy}")
-    print(f"Training cost: {cost}")
+    configspace = configure_nasbench201()
+
+    if output_path is None:
+        raise ValueError("Output path has to be given when deepcave is enabled.")
+
+    regret = Objective("regret", lower=0, upper=1, optimize="upper")
+    train_time = Objective("training_time")
+
+    with Recorder(configspace, objectives=[regret, train_time], save_path=output_path) as r:
+        for config in configspace.sample_configuration(n_models_per_budget):
+            for budget in budgets:
+                r.start(config, budget)
+                # The same nasbench201 object can't be queried more than once, so reinitialize it always
+                # TODO Do you know why this is the case?
+                nasbench201 = NasBench201SearchSpace()
+                accuracy, train_time = nasbench201_random_query(nasbench201, configspace, dataset)
+                regret = nasbenc201_optimal_results["cifar10_test_acc"] - accuracy
+                r.end(costs=[regret, train_time])
+

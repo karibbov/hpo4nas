@@ -1,1 +1,0 @@
-{"config": {"op_0": "ReLUConvBN1x1", "op_1": "ReLUConvBN3x3", "op_2": "Identity", "op_3": "ReLUConvBN3x3", "op_4": "AvgPool3x3", "op_5": "ReLUConvBN3x3"}, "score": 0.6400000000000006, "info": {"train accuracy": 99.992, "test accuracy": 90.97, "budget": 200.0}}

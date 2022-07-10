@@ -1,0 +1,370 @@
+{
+    "0": {
+        "op_0": "Zero",
+        "op_1": "Identity",
+        "op_2": "ReLUConvBN3x3",
+        "op_3": "ReLUConvBN1x1",
+        "op_4": "AvgPool3x3",
+        "op_5": "Zero"
+    },
+    "1": {
+        "op_0": "Zero",
+        "op_1": "Zero",
+        "op_2": "ReLUConvBN3x3",
+        "op_3": "Zero",
+        "op_4": "ReLUConvBN1x1",
+        "op_5": "Zero"
+    },
+    "2": {
+        "op_0": "ReLUConvBN3x3",
+        "op_1": "AvgPool3x3",
+        "op_2": "ReLUConvBN1x1",
+        "op_3": "ReLUConvBN3x3",
+        "op_4": "ReLUConvBN3x3",
+        "op_5": "Zero"
+    },
+    "3": {
+        "op_0": "ReLUConvBN3x3",
+        "op_1": "AvgPool3x3",
+        "op_2": "Identity",
+        "op_3": "Zero",
+        "op_4": "ReLUConvBN3x3",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "4": {
+        "op_0": "ReLUConvBN3x3",
+        "op_1": "ReLUConvBN1x1",
+        "op_2": "AvgPool3x3",
+        "op_3": "ReLUConvBN3x3",
+        "op_4": "ReLUConvBN3x3",
+        "op_5": "Identity"
+    },
+    "5": {
+        "op_0": "AvgPool3x3",
+        "op_1": "ReLUConvBN3x3",
+        "op_2": "Zero",
+        "op_3": "AvgPool3x3",
+        "op_4": "Zero",
+        "op_5": "Identity"
+    },
+    "6": {
+        "op_0": "Identity",
+        "op_1": "AvgPool3x3",
+        "op_2": "ReLUConvBN3x3",
+        "op_3": "ReLUConvBN3x3",
+        "op_4": "ReLUConvBN3x3",
+        "op_5": "ReLUConvBN1x1"
+    },
+    "7": {
+        "op_0": "Zero",
+        "op_1": "Zero",
+        "op_2": "Identity",
+        "op_3": "ReLUConvBN3x3",
+        "op_4": "Zero",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "8": {
+        "op_0": "AvgPool3x3",
+        "op_1": "Identity",
+        "op_2": "Zero",
+        "op_3": "AvgPool3x3",
+        "op_4": "Zero",
+        "op_5": "Zero"
+    },
+    "9": {
+        "op_0": "ReLUConvBN3x3",
+        "op_1": "ReLUConvBN1x1",
+        "op_2": "Zero",
+        "op_3": "Zero",
+        "op_4": "Identity",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "10": {
+        "op_0": "ReLUConvBN3x3",
+        "op_1": "ReLUConvBN3x3",
+        "op_2": "ReLUConvBN3x3",
+        "op_3": "Identity",
+        "op_4": "ReLUConvBN3x3",
+        "op_5": "Zero"
+    },
+    "11": {
+        "op_0": "AvgPool3x3",
+        "op_1": "Identity",
+        "op_2": "AvgPool3x3",
+        "op_3": "Zero",
+        "op_4": "ReLUConvBN3x3",
+        "op_5": "Identity"
+    },
+    "12": {
+        "op_0": "Zero",
+        "op_1": "ReLUConvBN3x3",
+        "op_2": "Identity",
+        "op_3": "AvgPool3x3",
+        "op_4": "AvgPool3x3",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "13": {
+        "op_0": "Identity",
+        "op_1": "ReLUConvBN3x3",
+        "op_2": "Zero",
+        "op_3": "ReLUConvBN1x1",
+        "op_4": "Zero",
+        "op_5": "Zero"
+    },
+    "14": {
+        "op_0": "ReLUConvBN3x3",
+        "op_1": "ReLUConvBN1x1",
+        "op_2": "AvgPool3x3",
+        "op_3": "AvgPool3x3",
+        "op_4": "AvgPool3x3",
+        "op_5": "Identity"
+    },
+    "15": {
+        "op_0": "Zero",
+        "op_1": "AvgPool3x3",
+        "op_2": "ReLUConvBN3x3",
+        "op_3": "Identity",
+        "op_4": "Identity",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "16": {
+        "op_0": "Zero",
+        "op_1": "Zero",
+        "op_2": "ReLUConvBN3x3",
+        "op_3": "Identity",
+        "op_4": "Identity",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "17": {
+        "op_0": "ReLUConvBN1x1",
+        "op_1": "AvgPool3x3",
+        "op_2": "AvgPool3x3",
+        "op_3": "ReLUConvBN3x3",
+        "op_4": "Zero",
+        "op_5": "Identity"
+    },
+    "18": {
+        "op_0": "Identity",
+        "op_1": "ReLUConvBN3x3",
+        "op_2": "AvgPool3x3",
+        "op_3": "ReLUConvBN3x3",
+        "op_4": "Zero",
+        "op_5": "ReLUConvBN1x1"
+    },
+    "19": {
+        "op_0": "ReLUConvBN3x3",
+        "op_1": "Identity",
+        "op_2": "AvgPool3x3",
+        "op_3": "ReLUConvBN3x3",
+        "op_4": "ReLUConvBN3x3",
+        "op_5": "ReLUConvBN1x1"
+    },
+    "20": {
+        "op_0": "ReLUConvBN3x3",
+        "op_1": "Identity",
+        "op_2": "Zero",
+        "op_3": "AvgPool3x3",
+        "op_4": "Identity",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "21": {
+        "op_0": "ReLUConvBN1x1",
+        "op_1": "Zero",
+        "op_2": "AvgPool3x3",
+        "op_3": "AvgPool3x3",
+        "op_4": "ReLUConvBN3x3",
+        "op_5": "Identity"
+    },
+    "22": {
+        "op_0": "ReLUConvBN3x3",
+        "op_1": "Identity",
+        "op_2": "ReLUConvBN3x3",
+        "op_3": "Zero",
+        "op_4": "ReLUConvBN3x3",
+        "op_5": "Zero"
+    },
+    "23": {
+        "op_0": "Zero",
+        "op_1": "Identity",
+        "op_2": "ReLUConvBN3x3",
+        "op_3": "AvgPool3x3",
+        "op_4": "ReLUConvBN1x1",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "24": {
+        "op_0": "AvgPool3x3",
+        "op_1": "Identity",
+        "op_2": "ReLUConvBN3x3",
+        "op_3": "ReLUConvBN1x1",
+        "op_4": "ReLUConvBN3x3",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "25": {
+        "op_0": "AvgPool3x3",
+        "op_1": "Identity",
+        "op_2": "Identity",
+        "op_3": "ReLUConvBN3x3",
+        "op_4": "Identity",
+        "op_5": "ReLUConvBN1x1"
+    },
+    "26": {
+        "op_0": "AvgPool3x3",
+        "op_1": "ReLUConvBN3x3",
+        "op_2": "ReLUConvBN3x3",
+        "op_3": "AvgPool3x3",
+        "op_4": "ReLUConvBN3x3",
+        "op_5": "Zero"
+    },
+    "27": {
+        "op_0": "Identity",
+        "op_1": "ReLUConvBN1x1",
+        "op_2": "ReLUConvBN1x1",
+        "op_3": "Zero",
+        "op_4": "ReLUConvBN3x3",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "28": {
+        "op_0": "ReLUConvBN1x1",
+        "op_1": "ReLUConvBN3x3",
+        "op_2": "Identity",
+        "op_3": "ReLUConvBN1x1",
+        "op_4": "AvgPool3x3",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "29": {
+        "op_0": "Zero",
+        "op_1": "Zero",
+        "op_2": "AvgPool3x3",
+        "op_3": "AvgPool3x3",
+        "op_4": "AvgPool3x3",
+        "op_5": "Identity"
+    },
+    "30": {
+        "op_0": "Zero",
+        "op_1": "Identity",
+        "op_2": "ReLUConvBN3x3",
+        "op_3": "ReLUConvBN1x1",
+        "op_4": "ReLUConvBN1x1",
+        "op_5": "AvgPool3x3"
+    },
+    "31": {
+        "op_0": "ReLUConvBN3x3",
+        "op_1": "Identity",
+        "op_2": "ReLUConvBN3x3",
+        "op_3": "ReLUConvBN1x1",
+        "op_4": "ReLUConvBN1x1",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "32": {
+        "op_0": "Identity",
+        "op_1": "ReLUConvBN1x1",
+        "op_2": "ReLUConvBN1x1",
+        "op_3": "ReLUConvBN1x1",
+        "op_4": "AvgPool3x3",
+        "op_5": "Zero"
+    },
+    "33": {
+        "op_0": "Zero",
+        "op_1": "Zero",
+        "op_2": "Identity",
+        "op_3": "ReLUConvBN1x1",
+        "op_4": "Zero",
+        "op_5": "AvgPool3x3"
+    },
+    "34": {
+        "op_0": "AvgPool3x3",
+        "op_1": "Zero",
+        "op_2": "AvgPool3x3",
+        "op_3": "AvgPool3x3",
+        "op_4": "Zero",
+        "op_5": "ReLUConvBN1x1"
+    },
+    "35": {
+        "op_0": "AvgPool3x3",
+        "op_1": "ReLUConvBN3x3",
+        "op_2": "Zero",
+        "op_3": "AvgPool3x3",
+        "op_4": "Identity",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "36": {
+        "op_0": "ReLUConvBN3x3",
+        "op_1": "AvgPool3x3",
+        "op_2": "Zero",
+        "op_3": "Zero",
+        "op_4": "ReLUConvBN3x3",
+        "op_5": "Zero"
+    },
+    "37": {
+        "op_0": "Zero",
+        "op_1": "ReLUConvBN3x3",
+        "op_2": "Identity",
+        "op_3": "ReLUConvBN3x3",
+        "op_4": "AvgPool3x3",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "38": {
+        "op_0": "ReLUConvBN3x3",
+        "op_1": "ReLUConvBN1x1",
+        "op_2": "AvgPool3x3",
+        "op_3": "ReLUConvBN3x3",
+        "op_4": "ReLUConvBN3x3",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "39": {
+        "op_0": "Zero",
+        "op_1": "ReLUConvBN3x3",
+        "op_2": "Identity",
+        "op_3": "ReLUConvBN1x1",
+        "op_4": "Identity",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "40": {
+        "op_0": "Identity",
+        "op_1": "AvgPool3x3",
+        "op_2": "Zero",
+        "op_3": "Zero",
+        "op_4": "ReLUConvBN3x3",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "41": {
+        "op_0": "ReLUConvBN3x3",
+        "op_1": "Identity",
+        "op_2": "Zero",
+        "op_3": "Zero",
+        "op_4": "ReLUConvBN1x1",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "42": {
+        "op_0": "Zero",
+        "op_1": "Identity",
+        "op_2": "Zero",
+        "op_3": "Zero",
+        "op_4": "ReLUConvBN3x3",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "43": {
+        "op_0": "ReLUConvBN1x1",
+        "op_1": "ReLUConvBN3x3",
+        "op_2": "Identity",
+        "op_3": "ReLUConvBN3x3",
+        "op_4": "Identity",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "44": {
+        "op_0": "Zero",
+        "op_1": "Zero",
+        "op_2": "Zero",
+        "op_3": "AvgPool3x3",
+        "op_4": "Zero",
+        "op_5": "ReLUConvBN3x3"
+    },
+    "45": {
+        "op_0": "ReLUConvBN3x3",
+        "op_1": "ReLUConvBN1x1",
+        "op_2": "Zero",
+        "op_3": "ReLUConvBN1x1",
+        "op_4": "Identity",
+        "op_5": "ReLUConvBN3x3"
+    }
+}

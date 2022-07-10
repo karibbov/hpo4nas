@@ -1,0 +1,18 @@
+{
+    "objectives": [
+        {
+            "name": "regret",
+            "lower": 0,
+            "upper": 100,
+            "lock_lower": true,
+            "lock_upper": true,
+            "optimize": "lower"
+        }
+    ],
+    "budgets": [
+        7,
+        22,
+        66,
+        199
+    ]
+}
