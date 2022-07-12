@@ -4,7 +4,7 @@ This package defines converters for the outputs of some optimizers, that then ca
 import os
 import pickle
 from pathlib import Path
-from DeepCAVE.deepcave.runs.run import Run
+from deepcave.runs.run import Run
 from deepcave import Objective
 from deepcave.utils.hash import file_to_hash
 from src.utils.nasbench201_configspace import op_indices2config
@@ -17,6 +17,11 @@ class DEHBRun(Run):
 
     @property
     def hash(self):
+        """
+        Returns a unique hash for the run (e.g. hashing the trial history).
+
+        :return:
+        """
         if self.path is None:
             return ""
         # Find the name of the history file under the path
@@ -25,6 +30,11 @@ class DEHBRun(Run):
 
     @property
     def latest_change(self):
+        """
+        Returns when the latest change was.
+
+        :return:
+        """
         if self.path is None:
             return 0
         # Find the name of the history file under the path
@@ -33,6 +43,12 @@ class DEHBRun(Run):
 
     @classmethod
     def from_path(cls, path):
+        """
+        Read DEHB's outputs and create a DEHBRun instance using this information.
+
+        :param path: The path to the directory storing the outputs of the optimizer in the non-deepcave format
+        :return: A Run object from the path.
+        """
         path = Path(path)
 
         # Find the name of the history file under the path
@@ -69,7 +85,7 @@ class DEHBRun(Run):
             budget = int(result[3])
             info = result[4]
             # Get the operation indices and convert them to configspace objects
-            config = op_indices2config(info['config'])
+            config = op_indices2config(config_dehb)
             # simulate train time
             end_time = start_time + train_time
 

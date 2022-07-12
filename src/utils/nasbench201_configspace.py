@@ -124,15 +124,23 @@ def nasbench201_random_query(search_space, configspace, dataset):
     return accuracy, cost
 
 
-def run_rs(dataset='cifar10', output_path=None, budgets=Iterable[int], n_models_per_budget=1):
+def nasbench201_query(search_space, cs_config: Configuration, dataset):
+    op_indices = configuration2op_indices(cs_config)
+    search_space.set_op_indices(op_indices)
+    dataset_api = get_dataset_api(search_space='nasbench201', dataset=dataset)
+    accuracy = search_space.query(Metric.VAL_ACCURACY, dataset=dataset, dataset_api=dataset_api)
+    cost = search_space.query(Metric.TRAIN_TIME, dataset=dataset, dataset_api=dataset_api)
+
+    return accuracy, cost
+
+
+def run_rs(config: dict, output_path: str):
     """
     Run random search on the search space where a specified number of models are trained on different budgets and
     output the results in the DeepCAVE format.
 
-    :param n_models_per_budget: number of picked architectures to evaluate per each budget
-    :param budgets: a list of budgets
+    :param config: the configuration storing the run's parameters
     :param output_path: the path to the output produced by deepcave
-    :param dataset: the name of the dataset as a string (cifar10 by default)
     """
     configspace = configure_nasbench201()
 
@@ -143,13 +151,13 @@ def run_rs(dataset='cifar10', output_path=None, budgets=Iterable[int], n_models_
     train_time = Objective("training_time")
 
     with Recorder(configspace, objectives=[regret, train_time], save_path=output_path) as r:
-        for config in configspace.sample_configuration(n_models_per_budget):
-            for budget in budgets:
-                r.start(config, budget)
+        for cs_config in configspace.sample_configuration(config['rs']['n_models_per_budget']):
+            for budget in config['rs']['budgets']:
+                r.start(cs_config, budget)
                 # The same nasbench201 object can't be queried more than once, so reinitialize it always
                 # TODO Do you know why this is the case?
                 nasbench201 = NasBench201SearchSpace()
-                accuracy, train_time = nasbench201_random_query(nasbench201, configspace, dataset)
+                accuracy, train_time = nasbench201_query(nasbench201, cs_config, config['dataset'])
                 regret = nasbenc201_optimal_results["cifar10_test_acc"] - accuracy
                 r.end(costs=[regret, train_time])
 

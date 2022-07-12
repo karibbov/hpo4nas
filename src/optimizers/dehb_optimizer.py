@@ -2,7 +2,7 @@
 This package defines a DEHB optimizer for the selected search space and uses DeepCAVE to analyze the results of the
 optimization.
 """
-
+from pathlib import Path
 import ConfigSpace
 import numpy as np
 
@@ -15,17 +15,29 @@ from src.utils.nasbench201_configspace import configure_nasbench201, configurati
 from src.utils.output_converter import DEHBRun
 
 
-def _target_function(config: ConfigSpace, budget: float, **kwargs):
+def analyze_run(output_path: Path, cs: ConfigSpace):
+    """
+    Use deep cave to visually interpret the data.
+
+    :param cs: the search space as a configspace object
+    :param output_path: the path to the output folder
+    """
+    run = DEHBRun(name="dehb", configspace=cs).from_path(output_path)
+    # TODO DEHBRun.from_path(output_path) ?
+    run.save(output_path)
+
+
+def _target_function(cs: ConfigSpace, budget: float, **kwargs):
     """
     Interface for target function that DEHB optimizes. It is the problem that needs to be solved,
     or the function to be optimized
 
-    :param config: the architecture to query defined as a ConfigSpace object
+    :param cs: the architecture to query defined as a ConfigSpace object
     :param budget: the current epoch to query
     :return: regret, training time and some additional information
     """
     budget = int(budget)
-    op_indices = configuration2op_indices(config)
+    op_indices = configuration2op_indices(cs)
     # model represents the sampled architecture
     model = NasBench201SearchSpace()
     model.set_op_indices(op_indices)
@@ -51,56 +63,33 @@ def _target_function(config: ConfigSpace, budget: float, **kwargs):
     return result
 
 
-def analyze_run(output_path, configspace):
-    """
-    Use deep cave to visually interpret the data.
-
-    :param configspace: the search space as a configspace object
-    :param output_path: the path to the output folder
-    """
-    run = DEHBRun(name="dehb", configspace=configspace).from_path(output_path)
-    run.save(output_path)
-
-
-def run_dehb(search_space, dataset, seed, output_path, min_budget=3, max_budget=199, brackets=4):
+def run_dehb(config: dict, output_path: Path):
     """
     Run DEHB on NAS-Bench-201 using the DATASET defined in this package
 
-    :param seed: the seed for the optimizer
-    :param search_space: string representation of the search space
+    :param config: the configuration for the optimization as a dictionary
     :param output_path: the directory to store the outputs in
-    :param dataset: a string specifying the dataset to train/validate/test the architectures on
-    :param min_budget: minimum epoch dehb should use as the lowest fidelity
-    :param max_budget: maximum epoch dehb should use as the highest fidelity
-    :param brackets: the number of brackets to use with dehb
     """
-    np.random.seed(seed)
+
+    np.random.seed(config['seed'])
     cs = configure_nasbench201()
-    n_dimension = len(cs.get_hyperparameters())
+
     dehb = DEHB(
         f=_target_function,
         cs=cs,
-        dimensions=n_dimension,
-        min_budget=min_budget,
-        max_budget=max_budget,
-        n_workers=1,
+        dimensions=len(cs.get_hyperparameters()),
+        min_budget=config['dehb']['min_budget'],
+        max_budget=config['dehb']['max_budget'],
+        n_workers=config['dehb']['n_workers'],
         output_path=output_path
     )
 
     trajectory, runtime, history = dehb.run(
-        brackets=brackets,
+        brackets=config['dehb']['brackets'],
         verbose=True,
         save_intermediate=False,
-        dataset=dataset,
+        dataset=config['dataset'],
     )
 
     analyze_run(output_path, cs)
-
-    last_eval = history[-1]
-    config, score, cost, budget, _info = last_eval
-
-    print("Last evaluated configuration:")
-    print(dehb.vector_to_configspace(config), end="")
-    print(f"got a score of {score}, was evaluated at a budget of {budget:.2f} and took {cost:.3f} seconds to run.")
-    print(f"The additional info attached: {_info}")
 
