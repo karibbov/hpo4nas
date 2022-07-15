@@ -47,8 +47,8 @@ def _target_function(cs: ConfigSpace, budget: float, **kwargs):
     test_acc = model.query(Metric.TEST_ACCURACY, dataset=kwargs['dataset'], dataset_api=dataset_api, epoch=budget)
     train_time = model.query(Metric.TRAIN_TIME, dataset=kwargs['dataset'], dataset_api=dataset_api, epoch=budget)
     train_regret = 100 - train_acc
-    valid_regret = optimal_nasbench201_performance["cifar10_val_acc"] - valid_acc
-    test_regret = optimal_nasbench201_performance["cifar10_test_acc"] - test_acc
+    valid_regret = optimal_nasbench201_performance()["cifar10_val_acc"] - valid_acc
+    test_regret = optimal_nasbench201_performance()["cifar10_test_acc"] - test_acc
 
     result = {
         "fitness": test_regret,  # this is what DE/DEHB minimizes
