@@ -11,18 +11,18 @@ from naslib.search_spaces.core.query_metrics import Metric
 from naslib.utils import get_dataset_api
 from dehb import DEHB
 from src.utils.nasbench201_configspace import configure_nasbench201, configuration2op_indices, \
-    nasbenc201_optimal_results as optimal
+    optimal_nasbench201_performance
 from src.utils.output_converter import DEHBRun
 
 
-def analyze_run(output_path: Path, cs: ConfigSpace):
+def analyze_run(output_path: str, cs: ConfigSpace):
     """
     Use deep cave to visually interpret the data.
 
     :param cs: the search space as a configspace object
     :param output_path: the path to the output folder
     """
-    run = DEHBRun(name="dehb", configspace=cs).from_path(output_path)
+    run = DEHBRun(name="dehb", configspace=cs).from_path(Path(output_path))
     # TODO DEHBRun.from_path(output_path) ?
     run.save(output_path)
 
@@ -46,24 +46,24 @@ def _target_function(cs: ConfigSpace, budget: float, **kwargs):
     valid_acc = model.query(Metric.VAL_ACCURACY, dataset=kwargs['dataset'], dataset_api=dataset_api, epoch=budget)
     test_acc = model.query(Metric.TEST_ACCURACY, dataset=kwargs['dataset'], dataset_api=dataset_api, epoch=budget)
     train_time = model.query(Metric.TRAIN_TIME, dataset=kwargs['dataset'], dataset_api=dataset_api, epoch=budget)
+    train_regret = 100 - train_acc
+    valid_regret = optimal_nasbench201_performance["cifar10_val_acc"] - valid_acc
+    test_regret = optimal_nasbench201_performance["cifar10_test_acc"] - test_acc
 
-    regret = optimal["cifar10_test_acc"] - test_acc
-
-    # TODO possibly move this to a config file to make the dehb run conversion for deep cave more generic
     result = {
-        "fitness": regret,  # this is what DE/DEHB minimizes
+        "fitness": test_regret,  # this is what DE/DEHB minimizes
         "cost": train_time,
         "info": {
-            "train_accuracy": train_acc,
-            "validation_accuracy": valid_acc,
-            "test_accuracy": test_acc,
-            "budget": budget,
+            "train_regret": train_regret,
+            "valid_regret": valid_regret,
+            "test_regret": test_regret,
+            "op_indices": model.op_indices.tolist(),  # tolist() to avoid json output errors in dehb
         }
     }
     return result
 
 
-def run_dehb(config: dict, output_path: Path):
+def run_dehb(config: dict, output_path: str):
     """
     Run DEHB on NAS-Bench-201 using the DATASET defined in this package
 
@@ -85,10 +85,11 @@ def run_dehb(config: dict, output_path: Path):
     )
 
     trajectory, runtime, history = dehb.run(
-        brackets=config['dehb']['brackets'],
+        total_cost=config['dehb']['wallclock'],
         verbose=True,
         save_intermediate=False,
         dataset=config['dataset'],
+        name=config['dehb']['name']
     )
 
     analyze_run(output_path, cs)
