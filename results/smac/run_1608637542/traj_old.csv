@@ -1,0 +1,10 @@
+"CPU Time Used","Estimated Training Performance","Wallclock Time","Incumbent ID","Automatic Configurator (CPU) Time","Configuration..."
+0.000000, 2147483648.000000, 0.000171, 1, 0.000171, op_0=''ReLUConvBN1x1'', op_1=''ReLUConvBN3x3'', op_2=''Zero'', op_3=''ReLUConvBN1x1'', op_4=''ReLUConvBN1x1'', op_5=''Zero''
+0.979774, 17.130000, 1.011890, 1, 0.032115, op_0=''ReLUConvBN1x1'', op_1=''ReLUConvBN3x3'', op_2=''Zero'', op_3=''ReLUConvBN1x1'', op_4=''ReLUConvBN1x1'', op_5=''Zero''
+1.935133, 10.390000, 1.992602, 2, 0.057468, op_0=''ReLUConvBN1x1'', op_1=''Identity'', op_2=''Identity'', op_3=''ReLUConvBN3x3'', op_4=''ReLUConvBN3x3'', op_5=''Zero''
+3.859101, 9.910000, 3.962662, 3, 0.103561, op_0=''ReLUConvBN3x3'', op_1=''Identity'', op_2=''ReLUConvBN3x3'', op_3=''ReLUConvBN1x1'', op_4=''ReLUConvBN1x1'', op_5=''ReLUConvBN1x1''
+13.713692, 9.840000, 15.986326, 4, 2.272634, op_0=''ReLUConvBN3x3'', op_1=''Identity'', op_2=''ReLUConvBN3x3'', op_3=''ReLUConvBN1x1'', op_4=''Identity'', op_5=''Identity''
+26.326793, 9.340000, 32.636169, 5, 6.309376, op_0=''ReLUConvBN3x3'', op_1=''Identity'', op_2=''ReLUConvBN3x3'', op_3=''ReLUConvBN1x1'', op_4=''ReLUConvBN3x3'', op_5=''Identity''
+50.469733, 9.330000, 60.112450, 6, 9.642718, op_0=''ReLUConvBN3x3'', op_1=''Identity'', op_2=''ReLUConvBN3x3'', op_3=''AvgPool3x3'', op_4=''ReLUConvBN3x3'', op_5=''Identity''
+181.455039, 9.170000, 218.710819, 7, 37.255780, op_0=''ReLUConvBN3x3'', op_1=''Identity'', op_2=''ReLUConvBN3x3'', op_3=''ReLUConvBN3x3'', op_4=''Zero'', op_5=''Identity''
+190.355011, 9.150000, 230.198508, 8, 39.843497, op_0=''ReLUConvBN3x3'', op_1=''Identity'', op_2=''Zero'', op_3=''ReLUConvBN3x3'', op_4=''Zero'', op_5=''Identity''
