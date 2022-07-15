@@ -1,0 +1,42 @@
+{
+    "objectives": [
+        {
+            "name": "regret",
+            "lower": 0,
+            "upper": 100,
+            "lock_lower": true,
+            "lock_upper": true,
+            "optimize": "lower"
+        },
+        {
+            "name": "regret",
+            "lower": 0,
+            "upper": 91.61,
+            "lock_lower": true,
+            "lock_upper": true,
+            "optimize": "lower"
+        },
+        {
+            "name": "regret",
+            "lower": 0,
+            "upper": 94.37,
+            "lock_lower": true,
+            "lock_upper": true,
+            "optimize": "lower"
+        },
+        {
+            "name": "training_time",
+            "lower": 0,
+            "upper": 15.083187480767569,
+            "lock_lower": true,
+            "lock_upper": false,
+            "optimize": "lower"
+        }
+    ],
+    "budgets": [
+        7,
+        22,
+        66,
+        199
+    ]
+}

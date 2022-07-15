@@ -1,12 +1,12 @@
 ﻿"""
 This package defines basic ConfigSpace related utility functions.
 """
-
+import time
 from pathlib import Path
 import numpy as np
 import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
-from ConfigSpace.configuration_space import Configuration
+from ConfigSpace.configuration_space import Configuration, ConfigurationSpace
 from deepcave import Objective, Recorder
 from naslib.search_spaces import NasBench201SearchSpace
 from naslib.utils import get_dataset_api
@@ -16,13 +16,37 @@ from ConfigSpace.read_and_write import json as cs_json
 
 
 # TODO: Convert this to a ConfigurationAdapter Class
-OP_NAMES = ["Identity", "Zero", "ReLUConvBN3x3", "ReLUConvBN1x1", "AvgPool3x3"]
-nasbench201_params = ['op_0', 'op_1', 'op_2', 'op_3', 'op_4', 'op_5']
-nasbenc201_optimal_results = {
-    "cifar10_val_acc": 91.61, "cifar10_test_acc": 94.37,
-    "cifar100_val_acc": 73.49, "cifar100_test_acc": 73.51,
-    "imgnet_val_acc": 46.77, "imgnet_test_acc": 47.31
-}
+
+
+def _nasbench201_parameters():
+    """
+    Get nasbench201 specific parameters. Returns the parameters needed to convert between ConfigSpace and nasbench201.
+
+    :return: OP_NAMES: list, nasbench201_params: list
+    """
+    OP_NAMES = ["Identity", "Zero", "ReLUConvBN3x3", "ReLUConvBN1x1", "AvgPool3x3"]
+    nasbench201_params = ['op_0', 'op_1', 'op_2', 'op_3', 'op_4', 'op_5']
+    return OP_NAMES, nasbench201_params
+
+
+def optimal_nasbench201_performance():
+    """
+    Returns the best possible performance that can be reached with the trained architectures on nasbench201.
+    This includes validation, and test accuracy for all datasets that are defined for this benchmark. Namely, cifar10,
+    cifar100, and Imagenet.
+
+    Example:
+        To get the best possible validation accuracy on cifar10 with nasbench201 use the key 'cifar10_val_acc' with the
+        dictionary returned by this function
+
+    :return: dictionary of optimal results
+    """
+    nasbenc201_optimal_results = {
+        "cifar10_val_acc": 91.61, "cifar10_test_acc": 94.37,
+        "cifar100_val_acc": 73.49, "cifar100_test_acc": 73.51,
+        "imgnet_val_acc": 46.77, "imgnet_test_acc": 47.31
+    }
+    return nasbenc201_optimal_results
 
 
 def save_configspace(output_path: str, file_name: str, formatting="json"):
@@ -46,6 +70,7 @@ def configure_nasbench201():
 
     :return: ConfigSpace object for the NAS-Bench-201 search space
     """
+    OP_NAMES, nasbench201_params = _nasbench201_parameters()
     cs = CS.ConfigurationSpace()
     op_0 = CSH.CategoricalHyperparameter(nasbench201_params[0], choices=OP_NAMES)
     op_1 = CSH.CategoricalHyperparameter(nasbench201_params[1], choices=OP_NAMES)
@@ -65,7 +90,8 @@ def configuration2op_indices(config):
     :param config: a sample NAS-Bench-201 configuration sampled from the ConfigSpace
     :return: operation indices
     """
-    print(config)
+    OP_NAMES, nasbench201_params = _nasbench201_parameters()
+
     op_indices = np.ones(len(nasbench201_params)) * -1
     for idx, param in enumerate(nasbench201_params):
         op_indices[idx] = OP_NAMES.index(config[param])
@@ -94,13 +120,14 @@ def op_indices2config(op_indices: Union[List[Union[int, str]], str]) -> Configur
     :param op_indices: Iterable of operation indices
     :return: The configuration object corresponding to the op_indices
     """
+    OP_NAMES, nasbench201_params = _nasbench201_parameters()
+
     if isinstance(op_indices, str):
         op_indices = list(op_indices)
 
     cs = configure_nasbench201()
 
     values = {nasbench201_params[idx]: OP_NAMES[int(value)] for idx, value in enumerate(op_indices)}
-    print(values)
     config = Configuration(configuration_space=cs, values=values)
     config.is_valid_configuration()
 
@@ -125,13 +152,23 @@ def nasbench201_random_query(search_space, configspace, dataset):
 
 
 def nasbench201_query(search_space, cs_config: Configuration, dataset):
+    """
+    Query the performance of the given architecture, cs_config, trained on the dataset, using nasbench201.
+
+    :param search_space: NasBench201SearchSpace object
+    :param cs_config: The architecture to query for
+    :param dataset: Query the architectures performance on this dataset
+    :return: train, val, test accuracy, train_time
+    """
     op_indices = configuration2op_indices(cs_config)
     search_space.set_op_indices(op_indices)
     dataset_api = get_dataset_api(search_space='nasbench201', dataset=dataset)
-    accuracy = search_space.query(Metric.VAL_ACCURACY, dataset=dataset, dataset_api=dataset_api)
-    cost = search_space.query(Metric.TRAIN_TIME, dataset=dataset, dataset_api=dataset_api)
+    train_accuracy = search_space.query(Metric.TRAIN_ACCURACY, dataset=dataset, dataset_api=dataset_api)
+    val_accuracy = search_space.query(Metric.VAL_ACCURACY, dataset=dataset, dataset_api=dataset_api)
+    test_accuracy = search_space.query(Metric.TEST_ACCURACY, dataset=dataset, dataset_api=dataset_api)
+    train_time = search_space.query(Metric.TRAIN_TIME, dataset=dataset, dataset_api=dataset_api)
 
-    return accuracy, cost
+    return train_accuracy, val_accuracy, test_accuracy, train_time
 
 
 def run_rs(config: dict, output_path: str):
@@ -142,22 +179,51 @@ def run_rs(config: dict, output_path: str):
     :param config: the configuration storing the run's parameters
     :param output_path: the path to the output produced by deepcave
     """
-    configspace = configure_nasbench201()
-
     if output_path is None:
         raise ValueError("Output path has to be given when deepcave is enabled.")
 
-    regret = Objective("regret", lower=0, upper=1, optimize="upper")
-    train_time = Objective("training_time")
+    print(f"Configurations for random search: {config['rs']}")
+    print("Random search is running, 1 dot = 1 sampled architecture")
+    configspace = configure_nasbench201()
 
-    with Recorder(configspace, objectives=[regret, train_time], save_path=output_path) as r:
-        for cs_config in configspace.sample_configuration(config['rs']['n_models_per_budget']):
-            for budget in config['rs']['budgets']:
-                r.start(cs_config, budget)
+    optimal_train_acc = 100
+    optimal_val_acc = optimal_nasbench201_performance()["cifar10_val_acc"]
+    optimal_test_acc = optimal_nasbench201_performance()["cifar10_test_acc"]
+
+    train_regret = Objective("regret", lower=0, upper=optimal_train_acc, optimize="lower")
+    val_regret = Objective("regret", lower=0, upper=optimal_val_acc, optimize="lower")
+    test_regret = Objective("regret", lower=0, upper=optimal_test_acc, optimize="lower")
+    train_time = Objective("training_time", lower=0, optimize="lower")
+    budgets = config['rs']['budgets']
+    runtime_limit = config['rs']['runtime_limit']
+    start_time = time.time()
+    current_time = time.time()
+
+    with Recorder(configspace, objectives=[train_regret, val_regret, test_regret, train_time], save_path=output_path) as r:
+        sampled_configs = configspace.sample_configuration(config['rs']['n_models_per_budget'])
+        # in case we sampled a single configuration only
+        if isinstance(sampled_configs, Configuration):
+            # list() will automatically convert the configspace to op indices for some reason
+            temp = []
+            temp.append(sampled_configs)
+            sampled_configs = temp
+        idx = 0
+        while current_time - start_time < runtime_limit and idx < len(sampled_configs):
+            for budget in budgets:
+                r.start(sampled_configs[idx], budget)
                 # The same nasbench201 object can't be queried more than once, so reinitialize it always
-                # TODO Do you know why this is the case?
+                # TODO Why is this the case?
                 nasbench201 = NasBench201SearchSpace()
-                accuracy, train_time = nasbench201_query(nasbench201, cs_config, config['dataset'])
-                regret = nasbenc201_optimal_results["cifar10_test_acc"] - accuracy
-                r.end(costs=[regret, train_time])
-
+                train_acc, val_acc, test_acc, train_time = nasbench201_query(nasbench201,
+                                                                             sampled_configs[idx],
+                                                                             config['dataset'])
+                train_regret = optimal_train_acc - train_acc
+                val_regret = optimal_val_acc - val_acc
+                test_regret = optimal_test_acc - test_acc
+                r.end(costs=[train_regret, val_regret, test_regret, train_time])
+                current_time = time.time()
+                print('.', end='')
+            idx = idx + 1
+    print(f"Completed random search run")
+    print(f"Total runtime: {current_time - start_time}")
+    print(f"Number of completed function evaluations: {(idx+1) * len(budgets)}")

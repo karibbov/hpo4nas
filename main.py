@@ -23,7 +23,7 @@ def run_optimizer(config: dict, output_path="./"):
     elif optimizer == 'dehb':
         run_dehb(config, output_path)
     elif optimizer == 're':
-        run_naslib_opt(config, output_path)
+        run_naslib_opt()
     elif optimizer == 'smac':
         raise NotImplementedError("SMAC has not yet been implemented.")
     else:

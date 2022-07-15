@@ -2,18 +2,22 @@ config_id: 0
 optimizer: 'rs'
 search_space: 'nasbench201'
 dataset: 'cifar10'
-seed: 42
+seed: 26
 output_path_root: "results"
 
 rs:
-  budgets: [10, 20, 30]
-  n_models_per_budget: 2
+  budgets: [7, 22, 66, 199]
+  n_models_per_budget: 500
+  runtime_limit: 300
 
 dehb:
   min_budget: 3
-  max_budget: 4
-  brackets: 4
+  max_budget: 199
+  brackets: 100
+  wallclock: 300
+  fevals: 300
   n_workers: 1
+  name: dehb
 
 re:
   re_specific_config_should_go_here: None
