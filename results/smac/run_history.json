@@ -1,20 +1,5 @@
 [
     {
-        "Name": "Person_1",
-        "Age": 11,
-        "Email": "11@gmail.com"
-    },
-    {
-        "Name": "Person_2",
-        "Age": 22,
-        "Email": "22@gmail.com"
-    },
-    {
-        "Name": "Person_3",
-        "Age": 33,
-        "Email": "33@gmail.com"
-    },
-    {
         "train_acc": 51.636000002441406,
         "val_acc": 44.07199998535156,
         "test_acc": 44.07199998535156,
