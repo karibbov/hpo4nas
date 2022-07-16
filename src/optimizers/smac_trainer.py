@@ -2,7 +2,7 @@ import os
 import sys
 sys.path.append(os.path.join(os.getcwd(), '../nas201/'))
 
-from deepcave import Recorder, Objective
+import json
 from naslib.utils import get_dataset_api, utils
 from nasbench201_configspace import configuration2op_indices
 
@@ -40,7 +40,7 @@ class SmacTrainer(object):
         """
         self.lightweight_output = lightweight_output
 
-    def query(self, arch):
+    def query(self, arch, budget):
         """
         Evaluate the architecture as given from the optimizer.
 
@@ -53,14 +53,36 @@ class SmacTrainer(object):
         api = get_dataset_api(search_space='nasbench201', dataset='cifar10')
         graph = search_spaces['nasbench201']()
         graph.set_op_indices(op_indicies)
-        acc = 1 - graph.query(Metric.VAL_ACCURACY, dataset='cifar10', dataset_api=api)
-        print("Validation Accuracy: %.4f" % acc)
+        val_acc = graph.query(Metric.VAL_ACCURACY, epoch=round(budget), dataset='cifar10', dataset_api=api)
+        print("Validation Accuracy: %.4f" % val_acc)
 
-        with Recorder(configspace, objectives=[accuracy, mse]) as r:
-            for config in configspace.sample_configuration(100):
-                for budget in [20, 40, 60]:
-                    r.start(config, budget)
-                    # Your code goes here
-                    r.end(costs=[0.5, 0.5])
+        train_acc = graph.query(Metric.TRAIN_ACCURACY, epoch=round(budget), dataset='cifar10', dataset_api=api)
+        test_acc = graph.query(Metric.TEST_ACCURACY, epoch=round(budget), dataset='cifar10', dataset_api=api)
 
-        return acc
+        train_loss = graph.query(Metric.TRAIN_LOSS, epoch=round(budget), dataset='cifar10', dataset_api=api)
+        val_loss = graph.query(Metric.VAL_LOSS, epoch=round(budget), dataset='cifar10', dataset_api=api)
+        test_loss = graph.query(Metric.TEST_LOSS, epoch=round(budget), dataset='cifar10', dataset_api=api)
+
+        train_time = graph.query(Metric.TRAIN_TIME, epoch=round(budget), dataset='cifar10', dataset_api=api)
+
+        dictionary = {
+            "train_acc": train_acc,
+            "val_acc": val_acc,
+            "test_acc": test_acc,
+            "train_loss": train_loss,
+            "val_loss": val_loss,
+            "test_loss": test_loss,
+            "train_time": train_time,
+            "budget": round(budget)
+        }
+
+        # Read JSON file
+        with open("run_history.json") as fp:
+            listObj = json.load(fp)
+
+        listObj.append(dictionary)
+
+        with open('run_history.json', 'w') as f:
+            json.dump(listObj, f, indent=4, separators=(',', ': '))
+
+        return 100 - val_acc
