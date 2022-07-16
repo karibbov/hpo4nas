@@ -1,7 +1,6 @@
 """
 This package defines converters for the outputs of some optimizers, that then can be interpreted by DeepCAVE.
 """
-import os
 import pickle
 from pathlib import Path
 
