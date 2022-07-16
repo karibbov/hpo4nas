@@ -3,31 +3,26 @@ This package defines a DEHB optimizer for the selected search space and uses Dee
 optimization.
 """
 from pathlib import Path
-import ConfigSpace
 import numpy as np
+from ConfigSpace import Configuration
 
-from naslib.search_spaces import NasBench201SearchSpace
-from naslib.search_spaces.core.query_metrics import Metric
-from naslib.utils import get_dataset_api
 from dehb import DEHB
-from src.utils.nasbench201_configspace import configure_nasbench201, configuration2op_indices, \
-    optimal_nasbench201_performance
+from src.utils.nasbench201_configspace import configure_nasbench201, query_nasbench201
 from src.utils.output_converter import DEHBRun
 
 
-def analyze_run(output_path: str, cs: ConfigSpace):
+def analyze_run(output_path: str):
     """
     Use deep cave to visually interpret the data.
 
     :param cs: the search space as a configspace object
     :param output_path: the path to the output folder
     """
-    run = DEHBRun(name="dehb", configspace=cs).from_path(Path(output_path))
-    # TODO DEHBRun.from_path(output_path) ?
+    run = DEHBRun.from_path(Path(output_path))
     run.save(output_path)
 
 
-def _target_function(cs: ConfigSpace, budget: float, **kwargs):
+def _target_function(cs_config: Configuration, budget: float, **kwargs):
     """
     Interface for target function that DEHB optimizes. It is the problem that needs to be solved,
     or the function to be optimized
@@ -37,27 +32,19 @@ def _target_function(cs: ConfigSpace, budget: float, **kwargs):
     :return: regret, training time and some additional information
     """
     budget = int(budget)
-    op_indices = configuration2op_indices(cs)
-    # model represents the sampled architecture
-    model = NasBench201SearchSpace()
-    model.set_op_indices(op_indices)
-    dataset_api = get_dataset_api(search_space='nasbench201', dataset=kwargs['dataset'])
-    train_acc = model.query(Metric.TRAIN_ACCURACY, dataset=kwargs['dataset'], dataset_api=dataset_api, epoch=budget)
-    valid_acc = model.query(Metric.VAL_ACCURACY, dataset=kwargs['dataset'], dataset_api=dataset_api, epoch=budget)
-    test_acc = model.query(Metric.TEST_ACCURACY, dataset=kwargs['dataset'], dataset_api=dataset_api, epoch=budget)
-    train_time = model.query(Metric.TRAIN_TIME, dataset=kwargs['dataset'], dataset_api=dataset_api, epoch=budget)
-    train_regret = 100 - train_acc
-    valid_regret = optimal_nasbench201_performance()["cifar10_val_acc"] - valid_acc
-    test_regret = optimal_nasbench201_performance()["cifar10_test_acc"] - test_acc
+
+    train_loss, valid_loss, test_loss, train_regret, valid_regret, test_regret, train_time = query_nasbench201(
+        cs_config, kwargs['dataset'], budget)
 
     result = {
-        "fitness": test_regret,  # this is what DE/DEHB minimizes
+        "fitness": valid_regret,  # this is what DEHB minimizes
         "cost": train_time,
         "info": {
+            "train_loss": train_loss,
+            "valid_loss": valid_loss,
+            "test_loss": test_loss,
             "train_regret": train_regret,
-            "valid_regret": valid_regret,
             "test_regret": test_regret,
-            "op_indices": model.op_indices.tolist(),  # tolist() to avoid json output errors in dehb
         }
     }
     return result
@@ -89,8 +76,8 @@ def run_dehb(config: dict, output_path: str):
         verbose=True,
         save_intermediate=False,
         dataset=config['dataset'],
-        name=config['dehb']['name']
+        name=config['dehb']['name'],
+        max_budget=config['dehb']['max_budget']
     )
 
-    analyze_run(output_path, cs)
-
+    analyze_run(output_path)
