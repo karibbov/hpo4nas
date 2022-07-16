@@ -1,5 +1,8 @@
 import os
 import sys
+
+from src.utils.nasbench201_configspace import query_nasbench201
+
 sys.path.append(os.path.join(os.getcwd(), '../nas201/'))
 
 import json
@@ -48,27 +51,15 @@ class SmacTrainer(object):
         Otherwise train as defined in the config.
 
         """
-        op_indicies = configuration2op_indices(arch)
-        # Loading NAS-201
-        api = get_dataset_api(search_space='nasbench201', dataset='cifar10')
-        graph = search_spaces['nasbench201']()
-        graph.set_op_indices(op_indicies)
-        val_acc = graph.query(Metric.VAL_ACCURACY, epoch=round(budget), dataset='cifar10', dataset_api=api)
-        print("Validation Accuracy: %.4f" % val_acc)
+        train_loss, val_loss, test_loss, train_regret, val_regret, test_regret, train_time = query_nasbench201(
+            arch, 'cifar10', round(budget))
 
-        train_acc = graph.query(Metric.TRAIN_ACCURACY, epoch=round(budget), dataset='cifar10', dataset_api=api)
-        test_acc = graph.query(Metric.TEST_ACCURACY, epoch=round(budget), dataset='cifar10', dataset_api=api)
-
-        train_loss = graph.query(Metric.TRAIN_LOSS, epoch=round(budget), dataset='cifar10', dataset_api=api)
-        val_loss = graph.query(Metric.VAL_LOSS, epoch=round(budget), dataset='cifar10', dataset_api=api)
-        test_loss = graph.query(Metric.TEST_LOSS, epoch=round(budget), dataset='cifar10', dataset_api=api)
-
-        train_time = graph.query(Metric.TRAIN_TIME, epoch=round(budget), dataset='cifar10', dataset_api=api)
+        print("Validation Regret: %.4f" % val_regret)
 
         dictionary = {
-            "train_acc": train_acc,
-            "val_acc": val_acc,
-            "test_acc": test_acc,
+            "train_acc": train_regret,
+            "val_acc": val_regret,
+            "test_acc": test_regret,
             "train_loss": train_loss,
             "val_loss": val_loss,
             "test_loss": test_loss,
@@ -85,4 +76,4 @@ class SmacTrainer(object):
         with open('run_history.json', 'w') as f:
             json.dump(listObj, f, indent=4, separators=(',', ': '))
 
-        return 100 - val_acc
+        return val_regret
