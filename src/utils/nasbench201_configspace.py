@@ -151,24 +151,56 @@ def nasbench201_random_query(search_space, configspace, dataset):
     return accuracy, cost
 
 
-def nasbench201_query(search_space, cs_config: Configuration, dataset):
+def _query(model: NasBench201SearchSpace, dataset: str, dataset_api, epoch: int):
     """
-    Query the performance of the given architecture, cs_config, trained on the dataset, using nasbench201.
+    Train the model on the dataset up to a certain epoch budget, and query its performance metrics on NAS-Bench-201
+    benchmark.
 
-    :param search_space: NasBench201SearchSpace object
+    :param model: the model whose performance to query
+    :param dataset: the dataset, a string representation thereof, e.g.: 'cifar10'
+    :param dataset_api: the dataset_api for nasbench201
+    :param epoch: the epoch to query
+    :return: train_loss, valid_loss, test_loss, train_regret, valid_regret, test_regret, train_time
+    """
+    train_loss = model.query(Metric.TRAIN_LOSS, dataset=dataset, dataset_api=dataset_api, epoch=epoch)
+    valid_loss = model.query(Metric.VAL_LOSS, dataset=dataset, dataset_api=dataset_api, epoch=epoch)
+    if epoch == 199:
+        test_loss = model.query(Metric.TEST_LOSS, dataset=dataset, dataset_api=dataset_api, epoch=-1)
+    else:
+        test_loss = -1
+
+    train_acc = model.query(Metric.TRAIN_ACCURACY, dataset=dataset, dataset_api=dataset_api, epoch=epoch)
+    train_regret = 100 - train_acc
+    valid_acc = model.query(Metric.VAL_ACCURACY, dataset=dataset, dataset_api=dataset_api, epoch=epoch)
+    valid_regret = optimal_nasbench201_performance()["cifar10_val_acc"] - valid_acc
+    if epoch == 199:
+        test_acc = model.query(Metric.TEST_ACCURACY, dataset=dataset, dataset_api=dataset_api, epoch=-1)
+        test_regret = optimal_nasbench201_performance()["cifar10_test_acc"] - test_acc
+    else:
+        test_regret = -1
+
+    train_time = model.query(Metric.TRAIN_TIME, dataset=dataset, dataset_api=dataset_api, epoch=epoch)
+
+    return train_loss, valid_loss, test_loss, train_regret, valid_regret, test_regret, train_time
+
+
+def query_nasbench201(cs_config: Configuration, dataset: str, epoch: int):
+    """
+    Based on the given configuration, create a model, train it on the dataset up to a certain epoch budget, and query
+    its performance metrics on NAS-Bench-201 benchmark.
+
+    :param epoch: the epoch to query the architecture's performance at
     :param cs_config: The architecture to query for
     :param dataset: Query the architectures performance on this dataset
     :return: train, val, test accuracy, train_time
     """
     op_indices = configuration2op_indices(cs_config)
-    search_space.set_op_indices(op_indices)
+    # model represents the sampled architecture
+    model = NasBench201SearchSpace()
+    model.set_op_indices(op_indices)
     dataset_api = get_dataset_api(search_space='nasbench201', dataset=dataset)
-    train_accuracy = search_space.query(Metric.TRAIN_ACCURACY, dataset=dataset, dataset_api=dataset_api)
-    val_accuracy = search_space.query(Metric.VAL_ACCURACY, dataset=dataset, dataset_api=dataset_api)
-    test_accuracy = search_space.query(Metric.TEST_ACCURACY, dataset=dataset, dataset_api=dataset_api)
-    train_time = search_space.query(Metric.TRAIN_TIME, dataset=dataset, dataset_api=dataset_api)
 
-    return train_accuracy, val_accuracy, test_accuracy, train_time
+    return _query(model, dataset, dataset_api, epoch)
 
 
 def run_rs(config: dict, output_path: str):
@@ -190,16 +222,22 @@ def run_rs(config: dict, output_path: str):
     optimal_val_acc = optimal_nasbench201_performance()["cifar10_val_acc"]
     optimal_test_acc = optimal_nasbench201_performance()["cifar10_test_acc"]
 
-    train_regret = Objective("regret", lower=0, upper=optimal_train_acc, optimize="lower")
-    val_regret = Objective("regret", lower=0, upper=optimal_val_acc, optimize="lower")
-    test_regret = Objective("regret", lower=0, upper=optimal_test_acc, optimize="lower")
-    train_time = Objective("training_time", lower=0, optimize="lower")
+    obj1 = Objective("Train loss", lower=0, upper=100)
+    obj2 = Objective("Validation loss", lower=0, upper=100)
+    obj3 = Objective("Test loss", lower=0, upper=100)
+    obj4 = Objective("Train regret", lower=0, upper=100)
+    obj5 = Objective("Validation regret", lower=0, upper=100)
+    obj6 = Objective("Test regret", lower=0, upper=100)
+    obj7 = Objective("Train time", lower=0)
+    objectives = [obj1, obj2, obj3, obj4, obj5, obj6, obj7]
+
     budgets = config['rs']['budgets']
     runtime_limit = config['rs']['runtime_limit']
-    start_time = time.time()
-    current_time = time.time()
+    wc_start_time = time.time()
+    wc_current_time = time.time()
+    start_time = 0
 
-    with Recorder(configspace, objectives=[train_regret, val_regret, test_regret, train_time], save_path=output_path) as r:
+    with Recorder(configspace, objectives=objectives, save_path=output_path) as r:
         sampled_configs = configspace.sample_configuration(config['rs']['n_models_per_budget'])
         # in case we sampled a single configuration only
         if isinstance(sampled_configs, Configuration):
@@ -208,22 +246,22 @@ def run_rs(config: dict, output_path: str):
             temp.append(sampled_configs)
             sampled_configs = temp
         idx = 0
-        while current_time - start_time < runtime_limit and idx < len(sampled_configs):
+        while wc_current_time - wc_start_time < runtime_limit and idx < len(sampled_configs):
             for budget in budgets:
-                r.start(sampled_configs[idx], budget)
-                # The same nasbench201 object can't be queried more than once, so reinitialize it always
-                # TODO Why is this the case?
-                nasbench201 = NasBench201SearchSpace()
-                train_acc, val_acc, test_acc, train_time = nasbench201_query(nasbench201,
-                                                                             sampled_configs[idx],
-                                                                             config['dataset'])
+                r.start(sampled_configs[idx], budget, start_time=start_time)
+                train_loss, val_loss, test_loss, train_acc, val_acc, test_acc, train_time = query_nasbench201(
+                    sampled_configs[idx], config['dataset'], budget)
                 train_regret = optimal_train_acc - train_acc
                 val_regret = optimal_val_acc - val_acc
                 test_regret = optimal_test_acc - test_acc
-                r.end(costs=[train_regret, val_regret, test_regret, train_time])
-                current_time = time.time()
+                # Simulate train time
+                end_time = start_time + train_time
+                r.end(costs=[train_loss, val_loss, test_loss, train_regret, val_regret, test_regret, train_time],
+                      end_time=end_time)
+                wc_current_time = time.time()
+                start_time = end_time
                 print('.', end='')
             idx = idx + 1
     print(f"Completed random search run")
-    print(f"Total runtime: {current_time - start_time}")
+    print(f"Total runtime: {wc_current_time - wc_start_time}")
     print(f"Number of completed function evaluations: {(idx+1) * len(budgets)}")
