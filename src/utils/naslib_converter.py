@@ -152,7 +152,7 @@ class NASLibRun(Run):
 if __name__ == "__main__":
 
     # get naslib run results
-    res_path = "./src/run/cifar10/nas_predictors/nasbench201/none/0"
+    res_path = "src/optimizers/bananas_run_0/cifar10/nas_predictors/nasbench201/rf/0"
     naslib_results_path = Path(res_path)
 
     output_root = Path(r"./results")

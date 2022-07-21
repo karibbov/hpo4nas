@@ -172,10 +172,10 @@ def _query(model: NasBench201SearchSpace, dataset: str, dataset_api, epoch: int)
     train_acc = model.query(Metric.TRAIN_ACCURACY, dataset=dataset, dataset_api=dataset_api, epoch=epoch)
     train_regret = 100 - train_acc
     valid_acc = model.query(Metric.VAL_ACCURACY, dataset=dataset, dataset_api=dataset_api, epoch=epoch)
-    valid_regret = optimal_nasbench201_performance()["cifar10_val_acc"] - valid_acc
+    valid_regret = optimal_nasbench201_performance()[dataset + "_val_acc"] - valid_acc
     if epoch == 199:
         test_acc = model.query(Metric.TEST_ACCURACY, dataset=dataset, dataset_api=dataset_api, epoch=-1)
-        test_regret = optimal_nasbench201_performance()["cifar10_test_acc"] - test_acc
+        test_regret = optimal_nasbench201_performance()[dataset + "_test_acc"] - test_acc
     else:
         test_regret = -1
 
