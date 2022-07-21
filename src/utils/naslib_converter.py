@@ -1,8 +1,9 @@
 # Currently to get this converter to work with deepCAVE we need to put this file into deepcave/runs/converters
 # then in deepcave/config.py import the NASLibRun class and add it to the list in CONVERTERS property
-
+import shutil
 from pathlib import Path
 import json
+import shutil
 
 from deepcave.runs import Status
 from deepcave.runs.objective import Objective
@@ -147,3 +148,32 @@ class NASLibRun(Run):
             start_time = end_time
 
         return run
+
+if __name__ == "__main__":
+
+    # get naslib run results
+    res_path = "./src/run/cifar10/nas_predictors/nasbench201/none/0"
+    naslib_results_path = Path(res_path)
+
+    output_root = Path(r"./results")
+
+    # get naslib run data
+    run_data = naslib_results_path.parts
+    with (naslib_results_path / "errors.json").open() as json_file:
+        json_text = json_file.read(-1)
+        config, _ = json.loads(json_text)
+
+    optimizer = config["optimizer"]
+    search_space = run_data[-3]
+    dataset = run_data[-5]
+    seed = "seed-" + run_data[-1]
+
+    # build folder structure
+    output_path = Path(*(output_root.parts + (optimizer, search_space, dataset, seed)))
+
+    # run converter and save
+    run = NASLibRun.from_path(Path(naslib_results_path))
+    run.save(output_path)
+
+    # remove naslib run logs and data
+    shutil.rmtree(Path(*run_data[:-5]))

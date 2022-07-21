@@ -1,0 +1,71 @@
+{
+    "objectives": [
+        {
+            "name": "Train regret",
+            "lower": 0,
+            "upper": 100,
+            "lock_lower": true,
+            "lock_upper": true,
+            "optimize": "lower"
+        },
+        {
+            "name": "Validation regret",
+            "lower": 0,
+            "upper": 100,
+            "lock_lower": true,
+            "lock_upper": true,
+            "optimize": "lower"
+        },
+        {
+            "name": "Test regret",
+            "lower": 0,
+            "upper": 100,
+            "lock_lower": true,
+            "lock_upper": true,
+            "optimize": "lower"
+        },
+        {
+            "name": "Train time",
+            "lower": 0,
+            "upper": 13.930073022842405,
+            "lock_lower": true,
+            "lock_upper": false,
+            "optimize": "lower"
+        }
+    ],
+    "budgets": [
+        -1
+    ],
+    "seed": 0,
+    "optimizer": "rs",
+    "search_space": "nasbench201",
+    "dataset": "cifar10",
+    "out_dir": "run",
+    "eval_only": false,
+    "resume": false,
+    "model_path": null,
+    "save": "run/cifar10/nas_predictors/nasbench201/none/0",
+    "data": "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/NASLib/naslib/data",
+    "checkpoint_freq": 1000,
+    "epochs": 100,
+    "fidelity": -1,
+    "predictor_type": "none",
+    "num_init": 10,
+    "k": 10,
+    "num_ensemble": 3,
+    "acq_fn_type": "its",
+    "acq_fn_optimization": "random_sampling",
+    "encoding_type": "adjacency_one_hot",
+    "num_arches_to_mutate": 2,
+    "max_mutations": 1,
+    "num_candidates": 20,
+    "batch_size": 256,
+    "data_size": 25000,
+    "cutout": false,
+    "cutout_length": 16,
+    "cutout_prob": 1.0,
+    "train_portion": 0.7,
+    "debug_predictor": false,
+    "sample_size": 10,
+    "population_size": 30
+}
