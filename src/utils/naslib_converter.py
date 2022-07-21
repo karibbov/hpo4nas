@@ -176,4 +176,4 @@ if __name__ == "__main__":
     run.save(output_path)
 
     # remove naslib run logs and data
-    shutil.rmtree(Path(*run_data[:-5]))
+    shutil.rmtree(Path("./src/run/"))

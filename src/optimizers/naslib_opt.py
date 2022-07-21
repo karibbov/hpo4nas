@@ -32,7 +32,8 @@ if __name__ == "__main__":
     # This will read the parameters from the default yaml configuration file, which in this
     # case is located in NASLib/naslib/benchmarks/nas_predictors/discrete_config.yaml.
     # You do not have to change this but you can play around with its parameters.
-    config = utils.get_config_from_args(config_type="nas_predictor")
+    # config = utils.get_config_from_args(config_type="nas_predictor")
+    config = utils.get_config_from_args(config_type="bbo-bs")
     utils.set_seed(config.seed)
     utils.log_args(config)
 
@@ -41,9 +42,10 @@ if __name__ == "__main__":
 
     from naslib.optimizers import RegularizedEvolution as RE
     from naslib.optimizers import RandomSearch as RS
+    from naslib.optimizers import Bananas
 
     # instantiate the optimizer object using the configuration file parameters
-    optimizer = RS(config)
+    optimizer = Bananas(config)
 
     from naslib.defaults.trainer import Trainer
     from src.utils.extended_Trainer import ExtendedTrainer

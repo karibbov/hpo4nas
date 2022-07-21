@@ -131,7 +131,13 @@ class ExtendedTrainer(Trainer):
             if report_incumbent:
                 arch_config = self.optimizer.get_final_architecture()
             else:
-                arch_config = self.optimizer.sampled_archs[-1].arch
+                try:
+                    arch_config = self.optimizer.sampled_archs[-1].arch
+                except AttributeError:
+                    try:
+                        arch_config = self.optimizer.population[-1].arch
+                    except AttributeError:
+                        arch_config = self.optimizer.train_data[-1].arch
 
             # convert sampled architecture into op_indices string
             op_indices = "".join([str(i) for i in arch_config.get_op_indices()])
