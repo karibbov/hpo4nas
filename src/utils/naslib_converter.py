@@ -101,11 +101,14 @@ class NASLibRun(Run):
 
         configspace = configspace_dict[search_space]()
 
-        obj1 = Objective("Train regret", lower=0, upper=100)
-        obj2 = Objective("Validation regret", lower=0, upper=100)
-        obj3 = Objective("Test regret", lower=0, upper=100)
-        obj4 = Objective("Train time", lower=0)
-        objectives = [obj1, obj2, obj3, obj4]
+        obj1 = Objective("Train loss", lower=0)
+        obj2 = Objective("Validation loss", lower=0)
+        obj3 = Objective("Test loss", lower=0)
+        obj4 = Objective("Train regret", lower=0, upper=100)
+        obj5 = Objective("Validation regret", lower=0, upper=100)
+        obj6 = Objective("Test regret", lower=0, upper=100)
+        obj7 = Objective("Train time", lower=0)
+        objectives = [obj1, obj2, obj3, obj4, obj5, obj6, obj7]
 
         config.update(config.pop('search'))
 
@@ -118,11 +121,14 @@ class NASLibRun(Run):
         end_time = 0.0
         # TODO: Use the best performance of the search space instead of 100
         for index in range(config['epochs']):
-            train_regret = 100 - float(errors_dict['train_acc'][index])
-            valid_regret = 100 - float(errors_dict['valid_acc'][index])
-            test_regret = 100 - float(errors_dict['test_acc'][index])
-            train_time = float(errors_dict['train_time'][index])
-            runtime = float(errors_dict['runtime'][index])
+            train_loss = errors_dict['train_loss'][index]
+            valid_loss = errors_dict['valid_loss'][index]
+            test_loss = errors_dict['test_loss'][index]
+            train_regret = 100 - errors_dict['train_acc'][index]
+            valid_regret = 100 - errors_dict['valid_acc'][index]
+            test_regret = 100 - errors_dict['test_acc'][index]
+            train_time = errors_dict['train_time'][index]
+            runtime = errors_dict['runtime'][index]
             op_indices = errors_dict['configs'][index]
 
             config = op_indices2config(op_indices).get_dictionary()
@@ -135,7 +141,7 @@ class NASLibRun(Run):
             additional_info = {}
 
             run.add(
-                costs=[train_regret, valid_regret, test_regret, train_time],
+                costs=[train_loss, valid_loss, test_loss, train_regret, valid_regret, test_regret, train_time],
                 config=config,
                 budget=budget,
                 start_time=start_time,
@@ -152,7 +158,7 @@ class NASLibRun(Run):
 if __name__ == "__main__":
 
     # get naslib run results
-    res_path = "src/optimizers/bananas_run_0/cifar10/nas_predictors/nasbench201/rf/0"
+    res_path = "src/optimizers/bananas_run_0/cifar10/nas_predictors/nasbench201/none/0"
     naslib_results_path = Path(res_path)
 
     output_root = Path(r"./results")
@@ -162,6 +168,9 @@ if __name__ == "__main__":
     with (naslib_results_path / "errors.json").open() as json_file:
         json_text = json_file.read(-1)
         config, _ = json.loads(json_text)
+        # print(type(config))
+        # print(config.keys())
+        # print(config[0])
 
     optimizer = config["optimizer"]
     search_space = run_data[-3]
@@ -176,4 +185,4 @@ if __name__ == "__main__":
     run.save(output_path)
 
     # remove naslib run logs and data
-    shutil.rmtree(Path("./src/run/"))
+    # shutil.rmtree(Path("./src/run/"))

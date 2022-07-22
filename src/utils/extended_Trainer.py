@@ -1,3 +1,8 @@
+import codecs
+import os
+import json
+import copy
+
 from naslib.defaults.trainer import Trainer
 from naslib.utils import utils
 from naslib.utils.logging import log_every_n_seconds, log_first_n
@@ -108,13 +113,16 @@ class ExtendedTrainer(Trainer):
                 end_time = time.time()
                 # TODO: nasbench101 does not have train_loss, valid_loss, test_loss implemented, so this is a quick fix for now
                 # train_acc, train_loss, valid_acc, valid_loss, test_acc, test_loss = self.optimizer.train_statistics()
+                # Our project doesn't use nasbench101 so we'll use everything here
                 (
                     train_acc,
                     valid_acc,
                     test_acc,
                     train_time,
+                    train_loss,
+                    valid_loss,
+                    test_loss,
                 ) = self.optimizer.train_statistics(report_incumbent)
-                train_loss, valid_loss, test_loss = -1, -1, -1
 
                 self.errors_dict.train_acc.append(train_acc)
                 self.errors_dict.train_loss.append(train_loss)
@@ -169,3 +177,21 @@ class ExtendedTrainer(Trainer):
             summary_writer.close()
 
         logger.info("Training finished")
+
+    def _log_to_json(self):
+        """log training statistics to json file"""
+        if not os.path.exists(self.config.save):
+            os.makedirs(self.config.save)
+        if not self.lightweight_output:
+            with codecs.open(
+                os.path.join(self.config.save, "errors.json"), "w", encoding="utf-8"
+            ) as file:
+                json.dump(self.errors_dict, file, separators=(",", ":"))
+        else:
+            with codecs.open(
+                os.path.join(self.config.save, "errors.json"), "w", encoding="utf-8"
+            ) as file:
+                lightweight_dict = copy.deepcopy(self.errors_dict)
+                for key in ["arch_eval"]:
+                    lightweight_dict.pop(key)
+                json.dump([self.config, lightweight_dict], file, separators=(",", ":"))

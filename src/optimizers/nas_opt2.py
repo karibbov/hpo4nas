@@ -1,4 +1,4 @@
-from naslib.optimizers import Bananas
+from naslib.optimizers import Bananas, RegularizedEvolution
 from naslib.search_spaces import NasBench201SearchSpace as NB201
 from naslib.defaults.trainer import Trainer
 from src.utils.extended_Trainer import ExtendedTrainer
@@ -6,6 +6,44 @@ import logging
 
 from naslib.utils import utils, setup_logger, get_dataset_api
 from naslib.utils.utils import parse_args
+from naslib.search_spaces.core.query_metrics import Metric
+
+
+def train_statistics_extended(self, report_incumbent=True):
+    if report_incumbent:
+        best_arch = self.get_final_architecture()
+    else:
+        try:
+            best_arch = self.sampled_archs[-1].arch
+        except AttributeError:
+            try:
+                best_arch = self.population[-1].arch
+            except AttributeError:
+                best_arch = self.train_data[-1].arch
+
+    return (
+        best_arch.query(
+            Metric.TRAIN_ACCURACY, self.dataset, dataset_api=self.dataset_api
+        ),
+        best_arch.query(
+            Metric.VAL_ACCURACY, self.dataset, dataset_api=self.dataset_api
+        ),
+        best_arch.query(
+            Metric.TEST_ACCURACY, self.dataset, dataset_api=self.dataset_api
+        ),
+        best_arch.query(
+            Metric.TRAIN_TIME, self.dataset, dataset_api=self.dataset_api
+        ),
+        best_arch.query(
+            Metric.TRAIN_LOSS, self.dataset, dataset_api=self.dataset_api
+        ),
+        best_arch.query(
+            Metric.VAL_LOSS, self.dataset, dataset_api=self.dataset_api
+        ),
+        best_arch.query(
+            Metric.TEST_LOSS, self.dataset, dataset_api=self.dataset_api
+        ),
+    )
 
 
 def run_optimizer(config_file="../configs/config_bananas_none_0.yaml",
@@ -26,6 +64,7 @@ def run_optimizer(config_file="../configs/config_bananas_none_0.yaml",
 
     # instantiate the search space object
     search_space = NB201()
+    nas_optimizer.train_statistics = train_statistics_extended
     optimizer = nas_optimizer(config)
 
     # this will load the NAS-Bench-201 data (architectures and their accuracy, runtime, etc).
@@ -43,5 +82,5 @@ def run_optimizer(config_file="../configs/config_bananas_none_0.yaml",
     pass
 
 if __name__ == "__main__":
-    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_bananas_rf_0.yaml"
-    run_optimizer(config_path, Bananas)
+    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_re_none_0.yaml"
+    run_optimizer(config_path, RegularizedEvolution)
