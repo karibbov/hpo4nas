@@ -26,6 +26,7 @@ class DEHBRun(Run):
         """
         if self.path is None:
             return ""
+
         return file_to_hash(self.path / "history_dehb.pkl")
 
     @property
@@ -37,6 +38,8 @@ class DEHBRun(Run):
         """
         if self.path is None:
             return 0
+        # You can change the file name to the one that your DEHB run generates (this can be controlled with the name
+        # parameter in DEHB's run method)
         return Path(self.path / "history_dehb.pkl").stat().st_mtime
 
     @classmethod
@@ -50,11 +53,15 @@ class DEHBRun(Run):
         path = Path(path)
 
         # Read the configspace of the search space
+        # DEHB does not have a configspace.json by default, so generate one yourself in the output folder
+        # This might change in the future
         from ConfigSpace.read_and_write import json as cs_json
         with (path / "configspace.json").open("r") as f:
             configspace = cs_json.read(f.read())
 
         # Read history, which stores all the relevant data for a single optimization run
+        # You can change the file name to the one that your DEHB run generates (this can be controlled with the name
+        # parameter in DEHB's run method)
         with open(path / "history_dehb.pkl", "rb") as f:
             history = pickle.load(f)
 
