@@ -51,7 +51,7 @@
         {
             "name": "Train time",
             "lower": 0,
-            "upper": 17.304157694180805,
+            "upper": 13.126507838567099,
             "lock_lower": true,
             "lock_upper": false,
             "optimize": "lower"
