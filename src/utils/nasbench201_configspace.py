@@ -213,7 +213,6 @@ def run_rs(config: dict, output_path: str):
     """
     print(f"Configurations for random search: {config['rs']}")
     print("Random search is running, 1 dot = 1 sampled architecture")
-    np.random.seed(config['seed'])
     configspace = configure_nasbench201()
 
     optimal_train_acc = 100

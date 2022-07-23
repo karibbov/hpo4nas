@@ -62,7 +62,6 @@ def run_dehb(config: dict, output_path: str):
     """
     output_path = create_run_id(output_path)
 
-    np.random.seed(config['seed'])
     cs = configure_nasbench201()
 
     dehb = DEHB(

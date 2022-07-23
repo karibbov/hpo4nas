@@ -3,6 +3,8 @@ This package defines an organized way of accessing the different features of the
 """
 from pathlib import Path
 
+import numpy as np
+
 from src.optimizers.dehb_optimizer import run_dehb
 from src.optimizers.naslib_opt import run_naslib_opt
 from src.utils.config import load_yaml_config
@@ -18,6 +20,8 @@ def run_optimizer(config: dict, output_path="./"):
     """
     optimizer = config['optimizer']
     number_of_runs = config['n_runs']
+    np.random.seed(config['seed'])
+
     for _ in range(number_of_runs):
         if optimizer == 'rs':
             run_rs(config, output_path)
