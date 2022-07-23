@@ -15,9 +15,6 @@ from typing import Iterable, List, Union
 from ConfigSpace.read_and_write import json as cs_json
 
 
-# TODO: Convert this to a ConfigurationAdapter Class
-
-
 def _nasbench201_parameters():
     """
     Get nasbench201 specific parameters. Returns the parameters needed to convert between ConfigSpace and nasbench201.
@@ -167,7 +164,8 @@ def _query(model: NasBench201SearchSpace, dataset: str, dataset_api, epoch: int)
     if epoch == 199:
         test_loss = model.query(Metric.TEST_LOSS, dataset=dataset, dataset_api=dataset_api, epoch=-1)
     else:
-        test_loss = -1
+        # The true test loss/regret is only defined for the architectures that have been fully trained for 200 epochs
+        test_loss = valid_loss
 
     train_acc = model.query(Metric.TRAIN_ACCURACY, dataset=dataset, dataset_api=dataset_api, epoch=epoch)
     train_regret = 100 - train_acc
@@ -177,9 +175,11 @@ def _query(model: NasBench201SearchSpace, dataset: str, dataset_api, epoch: int)
         test_acc = model.query(Metric.TEST_ACCURACY, dataset=dataset, dataset_api=dataset_api, epoch=-1)
         test_regret = optimal_nasbench201_performance()[dataset + "_test_acc"] - test_acc
     else:
-        test_regret = -1
+        test_regret = valid_regret
 
     train_time = model.query(Metric.TRAIN_TIME, dataset=dataset, dataset_api=dataset_api, epoch=epoch)
+    # simulate training time for the specific epoch
+    train_time *= (epoch+1)/200
 
     return train_loss, valid_loss, test_loss, train_regret, valid_regret, test_regret, train_time
 
@@ -192,7 +192,7 @@ def query_nasbench201(cs_config: Configuration, dataset: str, epoch: int):
     :param epoch: the epoch to query the architecture's performance at
     :param cs_config: The architecture to query for
     :param dataset: Query the architectures performance on this dataset
-    :return: train, val, test accuracy, train_time
+    :return: train_loss, valid_loss, test_loss, train_regret, valid_regret, test_regret, train_time
     """
     op_indices = configuration2op_indices(cs_config)
     # model represents the sampled architecture
@@ -211,11 +211,9 @@ def run_rs(config: dict, output_path: str):
     :param config: the configuration storing the run's parameters
     :param output_path: the path to the output produced by deepcave
     """
-    if output_path is None:
-        raise ValueError("Output path has to be given when deepcave is enabled.")
-
     print(f"Configurations for random search: {config['rs']}")
     print("Random search is running, 1 dot = 1 sampled architecture")
+    np.random.seed(config['seed'])
     configspace = configure_nasbench201()
 
     optimal_train_acc = 100
@@ -249,11 +247,8 @@ def run_rs(config: dict, output_path: str):
         while wc_current_time - wc_start_time < runtime_limit and idx < len(sampled_configs):
             for budget in budgets:
                 r.start(sampled_configs[idx], budget, start_time=start_time)
-                train_loss, val_loss, test_loss, train_acc, val_acc, test_acc, train_time = query_nasbench201(
+                train_loss, val_loss, test_loss, train_regret, val_regret, test_regret, train_time = query_nasbench201(
                     sampled_configs[idx], config['dataset'], budget)
-                train_regret = optimal_train_acc - train_acc
-                val_regret = optimal_val_acc - val_acc
-                test_regret = optimal_test_acc - test_acc
                 # Simulate train time
                 end_time = start_time + train_time
                 r.end(costs=[train_loss, val_loss, test_loss, train_regret, val_regret, test_regret, train_time],
