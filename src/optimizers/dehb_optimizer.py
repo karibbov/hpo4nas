@@ -86,16 +86,19 @@ def run_dehb(config: dict, output_path: str):
     analyze_run(output_path)
 
 
-def create_run_id(output_path: str):
+def create_run_id(output_path: str, append_name=True):
     """
     This makes sure that each DEHB run gets a separate run folder.
 
+    :param append_name: whether to append 'dehb_' in front of each run
     :param output_path: the folder to output the results
     :return: a new path having an id to distinguish this run from earlier ones
     """
     run_name = '/run_1'
-    runs = fnmatch.filter(os.listdir(output_path), 'run_*')
+    runs = fnmatch.filter(os.listdir(output_path), '*run_*')
     if len(runs) > 0:
         next_id = np.max(np.array([run.split('_') for run in runs])[:, 1].astype(np.int)) + 1
         run_name = f'/run_{next_id}'
+    if append_name:
+        run_name = '/DEHB-' + run_name[1:]
     return output_path + run_name
