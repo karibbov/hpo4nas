@@ -1,0 +1,1 @@
+{"config": {"op_0": "ReLUConvBN3x3", "op_1": "ReLUConvBN3x3", "op_2": "Identity", "op_3": "ReLUConvBN3x3", "op_4": "ReLUConvBN3x3", "op_5": "ReLUConvBN3x3"}, "score": 8.524000004882808, "info": {"train_loss": 0.001201312141045928, "valid_loss": 0.43283575439453126, "test_loss": 0.4440762984275818, "train_regret": 0.0, "test_regret": 9.069999999999993}}
