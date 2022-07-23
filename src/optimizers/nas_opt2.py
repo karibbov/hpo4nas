@@ -48,9 +48,6 @@ def train_statistics_extended(self, report_incumbent=True):
 
 def run_optimizer(config_file="../configs/config_bananas_none_0.yaml",
                   nas_optimizer=Bananas) -> None:
-    # TODO: add all the utilities, such as config file reading, logging as before.
-    # afterwards instantiate the search space, optimizer, trainer and run the search + evaluation
-
     # This will read the parameters from the default yaml configuration file, which in this
     # case is located in NASLib/naslib/benchmarks/nas_predictors/discrete_config.yaml.
     # You do not have to change this but you can play around with its parameters.
@@ -83,4 +80,8 @@ def run_optimizer(config_file="../configs/config_bananas_none_0.yaml",
 
 if __name__ == "__main__":
     config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_re_none_0.yaml"
+    run_optimizer(config_path, RegularizedEvolution)
+    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_re_none_1.yaml"
+    run_optimizer(config_path, RegularizedEvolution)
+    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_re_none_2.yaml"
     run_optimizer(config_path, RegularizedEvolution)

@@ -136,7 +136,7 @@ class NASLibRun(Run):
 
             # The ignored parameters
             status = Status.SUCCESS
-            budget = -1
+            budget = 199
             origin = "none"
             additional_info = {}
 
@@ -153,12 +153,27 @@ class NASLibRun(Run):
 
             start_time = end_time
 
+            # since naslib doesn't use any multifidelity method unlike dehb and bohb
+            # we use a trick to be able to compare results to other runs
+            if index == 0:
+                budgets = [2, 7, 22, 66]
+                for budget in budgets:
+                    run.add(
+                        costs=[train_loss, valid_loss, test_loss, train_regret, valid_regret, test_regret, train_time],
+                        config=config,
+                        budget=budget,
+                        start_time=start_time,
+                        end_time=start_time,
+                        status=status,
+                        origin=origin,
+                        additional=additional_info,
+                    )
         return run
 
 if __name__ == "__main__":
 
     # get naslib run results
-    res_path = "src/optimizers/bananas_run_0/cifar10/nas_predictors/nasbench201/none/0"
+    res_path = "src/optimizers/bananas_run_0/cifar10/nas_predictors/nasbench201/none/2"
     naslib_results_path = Path(res_path)
 
     output_root = Path(r"./results")
@@ -175,7 +190,7 @@ if __name__ == "__main__":
     optimizer = config["optimizer"]
     search_space = run_data[-3]
     dataset = run_data[-5]
-    seed = "seed-" + run_data[-1]
+    seed = optimizer + "-seed-" + run_data[-1]
 
     # build folder structure
     output_path = Path(*(output_root.parts + (optimizer, search_space, dataset, seed)))
