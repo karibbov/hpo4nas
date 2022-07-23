@@ -6,7 +6,7 @@ seed: 300
 output_path_root: "results"
 
 rs:
-  budgets: [2, 7, 22, 66, 199]
+  budgets: [199]
   n_models_per_budget: 500
   runtime_limit: 300
 
