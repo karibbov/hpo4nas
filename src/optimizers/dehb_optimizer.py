@@ -2,13 +2,15 @@
 This package defines a DEHB optimizer for the selected search space and uses DeepCAVE to analyze the results of the
 optimization.
 """
+import fnmatch
+import os
 from pathlib import Path
 import numpy as np
 from ConfigSpace import Configuration
 
 from dehb import DEHB
 from src.utils.dehb_converter import DEHBRun
-from src.utils.nasbench201_configspace import configure_nasbench201, query_nasbench201
+from src.utils.nasbench201_configspace import configure_nasbench201, query_nasbench201, save_configspace
 
 
 def analyze_run(output_path: str):
@@ -18,6 +20,7 @@ def analyze_run(output_path: str):
     :param cs: the search space as a configspace object
     :param output_path: the path to the output folder
     """
+    save_configspace(output_path=output_path, file_name="configspace")
     run = DEHBRun.from_path(Path(output_path))
     run.save(output_path)
 
@@ -52,11 +55,12 @@ def _target_function(cs_config: Configuration, budget: float, **kwargs):
 
 def run_dehb(config: dict, output_path: str):
     """
-    Run DEHB on NAS-Bench-201 using the DATASET defined in this package
+    Run DEHB on NAS-Bench-201 with the settings defined in the config dictionary
 
     :param config: the configuration for the optimization as a dictionary
     :param output_path: the directory to store the outputs in
     """
+    output_path = create_run_id(output_path)
 
     np.random.seed(config['seed'])
     cs = configure_nasbench201()
@@ -81,3 +85,18 @@ def run_dehb(config: dict, output_path: str):
     )
 
     analyze_run(output_path)
+
+
+def create_run_id(output_path: str):
+    """
+    This makes sure that each DEHB run gets a separate run folder.
+
+    :param output_path: the folder to output the results
+    :return: a new path having an id to distinguish this run from earlier ones
+    """
+    run_name = '/run_1'
+    runs = fnmatch.filter(os.listdir(output_path), 'run_*')
+    if len(runs) > 0:
+        next_id = np.max(np.array([run.split('_') for run in runs])[:, 1].astype(np.int)) + 1
+        run_name = f'/run_{next_id}'
+    return output_path + run_name

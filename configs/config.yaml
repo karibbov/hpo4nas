@@ -4,10 +4,11 @@ search_space: 'nasbench201'
 dataset: 'cifar10'
 seed: 300
 output_path_root: "results"
+n_runs: 1
 
 rs:
   budgets: [199]
-  n_models_per_budget: 500
+  n_models_per_budget: 999999
   runtime_limit: 300
 
 dehb:
