@@ -1,17 +1,20 @@
 ﻿"""
 This package defines basic ConfigSpace related utility functions.
 """
+import fnmatch
+import os
 import time
 from pathlib import Path
 import numpy as np
 import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
-from ConfigSpace.configuration_space import Configuration, ConfigurationSpace
+from ConfigSpace.configuration_space import Configuration
 from deepcave import Objective, Recorder
+from deepcave.runs.converters.deepcave import DeepCAVERun
 from naslib.search_spaces import NasBench201SearchSpace
 from naslib.utils import get_dataset_api
 from naslib.search_spaces.core.query_metrics import Metric
-from typing import Iterable, List, Union
+from typing import List, Union
 from ConfigSpace.read_and_write import json as cs_json
 
 
@@ -225,9 +228,9 @@ def run_rs(config: dict, output_path: str):
     optimal_val_acc = optimal_nasbench201_performance()["cifar10_val_acc"]
     optimal_test_acc = optimal_nasbench201_performance()["cifar10_test_acc"]
 
-    obj1 = Objective("Train loss", lower=0, upper=100)
-    obj2 = Objective("Validation loss", lower=0, upper=100)
-    obj3 = Objective("Test loss", lower=0, upper=100)
+    obj1 = Objective("Train loss", lower=0)
+    obj2 = Objective("Validation loss", lower=0)
+    obj3 = Objective("Test loss", lower=0)
     obj4 = Objective("Train regret", lower=0, upper=100)
     obj5 = Objective("Validation regret", lower=0, upper=100)
     obj6 = Objective("Test regret", lower=0, upper=100)
@@ -265,3 +268,4 @@ def run_rs(config: dict, output_path: str):
     print(f"Completed random search run")
     print(f"Total runtime: {wc_current_time - wc_start_time}")
     print(f"Number of completed function evaluations: {(idx+1) * len(budgets)}")
+
