@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 
 from src.optimizers.dehb_optimizer import run_dehb
-from src.optimizers.naslib_opt import run_naslib_opt
+from src.optimizers.nas_opt2 import run_naslib
 from src.utils.config import load_yaml_config
 from src.utils.nasbench201_configspace import run_rs
 from src.utils.output_generator import generate_only_outputs_for_deepcave
@@ -28,8 +28,10 @@ def run_optimizer(config: dict, output_path="./"):
             run_rs(config, output_path)
         elif optimizer == 'dehb':
             run_dehb(config, output_path)
-        elif optimizer == 're':
-            run_naslib_opt()
+        if optimizer == 're':
+            run_naslib(config, optimizer)
+        elif optimizer == 'bananas':
+            run_naslib(config, optimizer)
         elif optimizer == 'smac':
             raise NotImplementedError("SMAC has not yet been implemented.")
         else:

@@ -8,6 +8,8 @@ from naslib.utils import utils, setup_logger, get_dataset_api
 from naslib.utils.utils import parse_args
 from naslib.search_spaces.core.query_metrics import Metric
 
+OPTIMIZER = {"re": RegularizedEvolution, "rs": RandomSearch, "bananas": Bananas}
+
 
 def train_statistics_extended(self, report_incumbent=True):
     if report_incumbent:
@@ -77,6 +79,17 @@ def run_optimizer(config_file="../configs/config_bananas_none_0.yaml",
     trainer.evaluate(dataset_api=dataset_api)
 
     pass
+
+
+def run_naslib(config: dict, optimizer: str = 'bananas'):
+    config = config[optimizer]
+
+    for dataset in config['datasets']:
+        for predictor in config['predictors']:
+            for seed in config['seeds']:
+                optimizer_config_path = f"./configs/config_{optimizer}_{dataset}_{predictor}_{seed}.yaml"
+                print(optimizer_config_path)
+                run_optimizer(optimizer_config_path, OPTIMIZER[optimizer])
 
 if __name__ == "__main__":
     # config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_re_imagenet_none_0.yaml"

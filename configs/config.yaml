@@ -1,11 +1,11 @@
 config_id: 0
-optimizer: 'dehb'
+optimizer: 're'
 search_space: 'nasbench201'
 dataset: 'cifar10'
 seed: 300
 output_path_root: "results"
-n_runs: 5
-convert_output_only_mode: True
+n_runs: 1
+convert_output_only_mode: False
 
 rs:
   budgets: [199]
@@ -22,7 +22,14 @@ dehb:
   name: dehb
 
 re:
-  re_specific_config_should_go_here: None
+  datasets: [ 'cifar10', 'cifar100', 'imagenet' ]
+  predictors: [ 'mlp', 'none' ]
+  seeds: [ 0, 1, 2 ]
+
+bananas:
+  datasets: [ 'cifar10', 'cifar100', 'imagenet' ]
+  predictors: [ 'gp', 'mlp' ]
+  seeds: [ 0, 1, 2 ]
 
 smac:
   smac_specific_config_should_go_here: None

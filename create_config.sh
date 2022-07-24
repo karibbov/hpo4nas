@@ -1,6 +1,6 @@
 %%bash
-optimizer=rs
-predictors=(none)
+optimizer=bananas
+predictors=(bayes_lin_reg mlp gp rf xgb none)
 
 start_seed=0
 
@@ -8,7 +8,7 @@ start_seed=0
 # this supposes your location is at NASLib/docs. Change the base_file location based on where you
 # opened the notebook
 base_file=./NASLib
-save_dir=../../run
+save_dir=run
 out_dir=$save_dir
 
 # search space / data:
