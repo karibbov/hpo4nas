@@ -3,25 +3,25 @@
         {
             "name": "Train loss",
             "lower": 0,
-            "upper": 100,
+            "upper": 2.3024603813171387,
             "lock_lower": true,
-            "lock_upper": true,
+            "lock_upper": false,
             "optimize": "lower"
         },
         {
             "name": "Validation loss",
             "lower": 0,
-            "upper": 100,
+            "upper": 2.302961437072754,
             "lock_lower": true,
-            "lock_upper": true,
+            "lock_upper": false,
             "optimize": "lower"
         },
         {
             "name": "Test loss",
             "lower": 0,
-            "upper": 100,
+            "upper": 2.3027108932495115,
             "lock_lower": true,
-            "lock_upper": true,
+            "lock_upper": false,
             "optimize": "lower"
         },
         {
@@ -51,13 +51,13 @@
         {
             "name": "Train time",
             "lower": 0,
-            "upper": 14.505438407262167,
+            "upper": 15.378595352172852,
             "lock_lower": true,
             "lock_upper": false,
             "optimize": "lower"
         }
     ],
     "budgets": [
-        199
+        2, 7, 22, 66, 199
     ]
 }
