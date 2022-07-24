@@ -4,7 +4,8 @@ search_space: 'nasbench201'
 dataset: 'cifar10'
 seed: 300
 output_path_root: "results"
-n_runs: 1
+n_runs: 5
+convert_output_only_mode: True
 
 rs:
   budgets: [199]
