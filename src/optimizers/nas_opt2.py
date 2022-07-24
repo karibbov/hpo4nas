@@ -1,4 +1,4 @@
-from naslib.optimizers import Bananas, RegularizedEvolution
+from naslib.optimizers import Bananas, RegularizedEvolution, RandomSearch
 from naslib.search_spaces import NasBench201SearchSpace as NB201
 from naslib.defaults.trainer import Trainer
 from src.utils.extended_Trainer import ExtendedTrainer
@@ -79,15 +79,21 @@ def run_optimizer(config_file="../configs/config_bananas_none_0.yaml",
     pass
 
 if __name__ == "__main__":
-    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_re_none_0.yaml"
-    run_optimizer(config_path, RegularizedEvolution)
-    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_re_none_1.yaml"
-    run_optimizer(config_path, RegularizedEvolution)
-    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_re_none_2.yaml"
-    run_optimizer(config_path, RegularizedEvolution)
-    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_bananas_bayes_lin_reg_0.yaml"
-    run_optimizer(config_path, Bananas)
-    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_bananas_gp_0.yaml"
-    run_optimizer(config_path, Bananas)
-    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_bananas_rf_0.yaml"
-    run_optimizer(config_path, Bananas)
+    # config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_re_imagenet_none_0.yaml"
+    # run_optimizer(config_path, RegularizedEvolution)
+    # config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_re_imagenet_none_1.yaml"
+    # run_optimizer(config_path, RegularizedEvolution)
+    # config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_re_imagenet_none_2.yaml"
+    # run_optimizer(config_path, RegularizedEvolution)
+    # config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_bananas_imagenet_bayes_lin_reg_1.yaml"
+    # run_optimizer(config_path, Bananas)
+    # config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_bananas_imagenet_gp_1.yaml"
+    # run_optimizer(config_path, Bananas)
+    # config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_bananas_imagenet_rf_1.yaml"
+    # run_optimizer(config_path, Bananas)
+    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_rs_none_0.yaml"
+    run_optimizer(config_path, RandomSearch)
+    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_rs_none_1.yaml"
+    run_optimizer(config_path, RandomSearch)
+    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_rs_none_2.yaml"
+    run_optimizer(config_path, RandomSearch)
