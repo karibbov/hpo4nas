@@ -4,25 +4,12 @@ optimization.
 """
 import fnmatch
 import os
-from pathlib import Path
 import numpy as np
 from ConfigSpace import Configuration
 
 from dehb import DEHB
-from src.utils.dehb_converter import DEHBRun
 from src.utils.nasbench201_configspace import configure_nasbench201, query_nasbench201, save_configspace
-
-
-def _generate_deepcave_output(output_path: str):
-    """
-    Generate output from the results under output_path that will be converted into the DeepCAVE format and saved under
-    output_path.
-
-    :param output_path: the path to the output folder
-    """
-    save_configspace(output_path=output_path, file_name="configspace")
-    run = DEHBRun.from_path(Path(output_path))
-    run.save(output_path)
+from src.utils.output_generator import generate_deepcave_output
 
 
 def _target_function(cs_config: Configuration, budget: float, **kwargs):
@@ -62,27 +49,13 @@ def _create_run_id(output_path: str, add_prefix=True):
     :return: a new path having an id to distinguish this run from earlier ones
     """
     run_name = '/run_1'
-    runs = fnmatch.filter(os.listdir(output_path), '*run_*')
+    runs = fnmatch.filter(os.listdir(output_path), '*run*')
     if len(runs) > 0:
         next_id = np.max(np.array([run.split('_') for run in runs])[:, 1].astype(np.int)) + 1
         run_name = f'/run_{next_id}'
     if add_prefix:
         run_name = f'/DEHB-{run_name[1:]}'
     return output_path + run_name
-
-
-def generate_outputs_for_deepcave(output_path: str):
-    """
-    Generates DeepCAVE run files for all DEHB runs under output_path.
-
-    :param output_path: the path to the output folder where the runs are
-    """
-    runs = fnmatch.filter(os.listdir(output_path), '*run_*')
-    if len(runs) > 0:
-        for run in runs:
-            _generate_deepcave_output(f'{output_path}/{run}')
-    else:
-        raise FileNotFoundError(f'No runs were found under {output_path}')
 
 
 def run_dehb(config: dict, output_path: str, format_for_deepcave=True):
@@ -117,6 +90,6 @@ def run_dehb(config: dict, output_path: str, format_for_deepcave=True):
     )
 
     if format_for_deepcave:
-        _generate_deepcave_output(output_path)
+        generate_deepcave_output(config, output_path)
 
 
