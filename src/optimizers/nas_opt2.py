@@ -85,3 +85,9 @@ if __name__ == "__main__":
     run_optimizer(config_path, RegularizedEvolution)
     config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_re_none_2.yaml"
     run_optimizer(config_path, RegularizedEvolution)
+    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_bananas_bayes_lin_reg_0.yaml"
+    run_optimizer(config_path, Bananas)
+    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_bananas_gp_0.yaml"
+    run_optimizer(config_path, Bananas)
+    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_bananas_rf_0.yaml"
+    run_optimizer(config_path, Bananas)

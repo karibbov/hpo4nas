@@ -173,7 +173,7 @@ class NASLibRun(Run):
 if __name__ == "__main__":
 
     # get naslib run results
-    res_path = "src/optimizers/bananas_run_0/cifar10/nas_predictors/nasbench201/none/2"
+    res_path = "src/optimizers/bananas_run_0/cifar10/nas_predictors/nasbench201/bayes_lin_reg/0"
     naslib_results_path = Path(res_path)
 
     output_root = Path(r"./results")
@@ -190,7 +190,8 @@ if __name__ == "__main__":
     optimizer = config["optimizer"]
     search_space = run_data[-3]
     dataset = run_data[-5]
-    seed = optimizer + "-seed-" + run_data[-1]
+    predictor = run_data[-2]
+    seed = optimizer + "-" + predictor + "-seed-" + run_data[-1]
 
     # build folder structure
     output_path = Path(*(output_root.parts + (optimizer, search_space, dataset, seed)))
