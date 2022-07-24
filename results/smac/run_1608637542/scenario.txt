@@ -10,4 +10,4 @@ wallclock_limit = 300.0
 always_race_default = False
 ta_run_limit = inf
 initial_incumbent = DEFAULT
-pcs_fn = smac3-output_2022-07-16_18:15:47_012469/run_1608637542/configspace.json
+pcs_fn = smac3-output_2022-07-24_16:39:14_411786/run_1608637542/configspace.json
