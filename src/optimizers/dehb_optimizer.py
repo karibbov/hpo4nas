@@ -8,7 +8,7 @@ import numpy as np
 from ConfigSpace import Configuration
 
 from dehb import DEHB
-from src.utils.nasbench201_configspace import configure_nasbench201, query_nasbench201, save_configspace
+from src.utils.nasbench201_configspace import configure_nasbench201, query_nasbench201
 from src.utils.output_generator import generate_deepcave_output
 
 
