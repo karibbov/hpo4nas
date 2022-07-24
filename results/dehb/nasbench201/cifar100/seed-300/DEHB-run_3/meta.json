@@ -1,0 +1,67 @@
+{
+    "objectives": [
+        {
+            "name": "Train loss",
+            "lower": 0,
+            "upper": 4.6066994190979,
+            "lock_lower": true,
+            "lock_upper": false,
+            "optimize": "lower"
+        },
+        {
+            "name": "Validation loss",
+            "lower": 0,
+            "upper": 6.631940194702149,
+            "lock_lower": true,
+            "lock_upper": false,
+            "optimize": "lower"
+        },
+        {
+            "name": "Test loss",
+            "lower": 0,
+            "upper": 6.631940194702149,
+            "lock_lower": true,
+            "lock_upper": false,
+            "optimize": "lower"
+        },
+        {
+            "name": "Train regret",
+            "lower": 0,
+            "upper": 100,
+            "lock_lower": true,
+            "lock_upper": true,
+            "optimize": "lower"
+        },
+        {
+            "name": "Validation regret",
+            "lower": 0,
+            "upper": 100,
+            "lock_lower": true,
+            "lock_upper": true,
+            "optimize": "lower"
+        },
+        {
+            "name": "Test regret",
+            "lower": 0,
+            "upper": 100,
+            "lock_lower": true,
+            "lock_upper": true,
+            "optimize": "lower"
+        },
+        {
+            "name": "Train time",
+            "lower": 0,
+            "upper": 25.690568486849468,
+            "lock_lower": true,
+            "lock_upper": false,
+            "optimize": "lower"
+        }
+    ],
+    "budgets": [
+        2,
+        7,
+        22,
+        66,
+        199
+    ]
+}
