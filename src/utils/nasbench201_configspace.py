@@ -38,10 +38,16 @@ def optimal_nasbench201_performance():
 
     :return: dictionary of optimal results
     """
+    # The following optimal results are the mean optimal results, so it is not a good upper limit for accuracy
+    # nasbenc201_optimal_results = {
+    #     "cifar10_val_acc": 91.61, "cifar10_test_acc": 94.37,
+    #     "cifar100_val_acc": 73.49, "cifar100_test_acc": 73.51,
+    #     "imgnet_val_acc": 46.77, "imgnet_test_acc": 47.31,
+    # }
     nasbenc201_optimal_results = {
-        "cifar10_val_acc": 91.61, "cifar10_test_acc": 94.37,
-        "cifar100_val_acc": 73.49, "cifar100_test_acc": 73.51,
-        "imgnet_val_acc": 46.77, "imgnet_test_acc": 47.31
+        "cifar10_val_acc": 100, "cifar10_test_acc": 100,
+        "cifar100_val_acc": 100, "cifar100_test_acc": 100,
+        "imgnet_val_acc": 100, "imgnet_test_acc": 100,
     }
     return nasbenc201_optimal_results
 

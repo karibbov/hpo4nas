@@ -3,11 +3,7 @@
         {
             "name": "Train loss",
             "lower": 0,
-<<<<<<<< HEAD:results/bananas/nasbench201/cifar10/bananas-bayes_lin_reg-seed-0/meta.json
-            "upper": 2.3024603813171387,
-========
             "upper": 2.3037231200408934,
->>>>>>>> 33568cc7a182184cff4ee50b8c1b5143ec14f9e9:results/dehb/nasbench201/cifar10/seed-300/DEHB-run_1/meta.json
             "lock_lower": true,
             "lock_upper": false,
             "optimize": "lower"
@@ -15,11 +11,7 @@
         {
             "name": "Validation loss",
             "lower": 0,
-<<<<<<<< HEAD:results/bananas/nasbench201/cifar10/bananas-bayes_lin_reg-seed-0/meta.json
-            "upper": 2.302708261871338,
-========
-            "upper": 6.66123618560791,
->>>>>>>> 33568cc7a182184cff4ee50b8c1b5143ec14f9e9:results/dehb/nasbench201/cifar10/seed-300/DEHB-run_1/meta.json
+            "upper": 5.118752640991211,
             "lock_lower": true,
             "lock_upper": false,
             "optimize": "lower"
@@ -27,11 +19,7 @@
         {
             "name": "Test loss",
             "lower": 0,
-<<<<<<<< HEAD:results/bananas/nasbench201/cifar10/bananas-bayes_lin_reg-seed-0/meta.json
-            "upper": 2.302708261871338,
-========
-            "upper": 6.66123618560791,
->>>>>>>> 33568cc7a182184cff4ee50b8c1b5143ec14f9e9:results/dehb/nasbench201/cifar10/seed-300/DEHB-run_1/meta.json
+            "upper": 5.118752640991211,
             "lock_lower": true,
             "lock_upper": false,
             "optimize": "lower"
@@ -63,11 +51,7 @@
         {
             "name": "Train time",
             "lower": 0,
-<<<<<<<< HEAD:results/bananas/nasbench201/cifar10/bananas-bayes_lin_reg-seed-0/meta.json
-            "upper": 16.453954815864563,
-========
-            "upper": 14.6725172996521,
->>>>>>>> 33568cc7a182184cff4ee50b8c1b5143ec14f9e9:results/dehb/nasbench201/cifar10/seed-300/DEHB-run_1/meta.json
+            "upper": 9.607012391090393,
             "lock_lower": true,
             "lock_upper": false,
             "optimize": "lower"
@@ -88,7 +72,7 @@
     "eval_only": false,
     "resume": false,
     "model_path": null,
-    "save": "bananas_run_0/cifar10/nas_predictors/nasbench201/bayes_lin_reg/0",
+    "save": "bananas_run_0/cifar10/nas_predictors/nasbench201/rf/0",
     "data": "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/NASLib/naslib/data",
     "acq_fn_optimization": "random_sampling",
     "acq_fn_type": "its",
@@ -108,7 +92,7 @@
     "num_ensemble": 3,
     "num_init": 20,
     "population_size": 30,
-    "predictor_type": "bayes_lin_reg",
+    "predictor_type": "rf",
     "sample_size": 10,
     "train_portion": 0.7
 }

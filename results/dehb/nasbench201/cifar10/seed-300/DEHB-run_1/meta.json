@@ -3,11 +3,7 @@
         {
             "name": "Train loss",
             "lower": 0,
-<<<<<<<< HEAD:results/bananas/nasbench201/cifar10/bananas-bayes_lin_reg-seed-0/meta.json
-            "upper": 2.3024603813171387,
-========
             "upper": 2.3037231200408934,
->>>>>>>> 33568cc7a182184cff4ee50b8c1b5143ec14f9e9:results/dehb/nasbench201/cifar10/seed-300/DEHB-run_1/meta.json
             "lock_lower": true,
             "lock_upper": false,
             "optimize": "lower"
@@ -15,11 +11,7 @@
         {
             "name": "Validation loss",
             "lower": 0,
-<<<<<<<< HEAD:results/bananas/nasbench201/cifar10/bananas-bayes_lin_reg-seed-0/meta.json
-            "upper": 2.302708261871338,
-========
             "upper": 6.66123618560791,
->>>>>>>> 33568cc7a182184cff4ee50b8c1b5143ec14f9e9:results/dehb/nasbench201/cifar10/seed-300/DEHB-run_1/meta.json
             "lock_lower": true,
             "lock_upper": false,
             "optimize": "lower"
@@ -27,11 +19,7 @@
         {
             "name": "Test loss",
             "lower": 0,
-<<<<<<<< HEAD:results/bananas/nasbench201/cifar10/bananas-bayes_lin_reg-seed-0/meta.json
-            "upper": 2.302708261871338,
-========
             "upper": 6.66123618560791,
->>>>>>>> 33568cc7a182184cff4ee50b8c1b5143ec14f9e9:results/dehb/nasbench201/cifar10/seed-300/DEHB-run_1/meta.json
             "lock_lower": true,
             "lock_upper": false,
             "optimize": "lower"
@@ -63,11 +51,7 @@
         {
             "name": "Train time",
             "lower": 0,
-<<<<<<<< HEAD:results/bananas/nasbench201/cifar10/bananas-bayes_lin_reg-seed-0/meta.json
-            "upper": 16.453954815864563,
-========
             "upper": 14.6725172996521,
->>>>>>>> 33568cc7a182184cff4ee50b8c1b5143ec14f9e9:results/dehb/nasbench201/cifar10/seed-300/DEHB-run_1/meta.json
             "lock_lower": true,
             "lock_upper": false,
             "optimize": "lower"
