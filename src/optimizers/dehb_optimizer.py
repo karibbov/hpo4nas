@@ -13,11 +13,11 @@ from src.utils.dehb_converter import DEHBRun
 from src.utils.nasbench201_configspace import configure_nasbench201, query_nasbench201, save_configspace
 
 
-def analyze_run(output_path: str):
+def _generate_deepcave_output(output_path: str):
     """
-    Use deep cave to visually interpret the data.
+    Generate output from the results under output_path that will be converted into the DeepCAVE format and saved under
+    output_path.
 
-    :param cs: the search space as a configspace object
     :param output_path: the path to the output folder
     """
     save_configspace(output_path=output_path, file_name="configspace")
@@ -30,7 +30,7 @@ def _target_function(cs_config: Configuration, budget: float, **kwargs):
     Interface for target function that DEHB optimizes. It is the problem that needs to be solved,
     or the function to be optimized
 
-    :param cs: the architecture to query defined as a ConfigSpace object
+    :param cs_config: the architecture to query defined as a ConfigSpace object
     :param budget: the current epoch to query
     :return: regret, training time and some additional information
     """
@@ -53,14 +53,47 @@ def _target_function(cs_config: Configuration, budget: float, **kwargs):
     return result
 
 
-def run_dehb(config: dict, output_path: str):
+def _create_run_id(output_path: str, add_prefix=True):
+    """
+    This makes sure that each DEHB run gets a separate run folder with a unique name.
+
+    :param add_prefix: whether to prefix each run's folder name with 'DEHB-'
+    :param output_path: the folder to output the results
+    :return: a new path having an id to distinguish this run from earlier ones
+    """
+    run_name = '/run_1'
+    runs = fnmatch.filter(os.listdir(output_path), '*run_*')
+    if len(runs) > 0:
+        next_id = np.max(np.array([run.split('_') for run in runs])[:, 1].astype(np.int)) + 1
+        run_name = f'/run_{next_id}'
+    if add_prefix:
+        run_name = f'/DEHB-{run_name[1:]}'
+    return output_path + run_name
+
+
+def generate_outputs_for_deepcave(output_path: str):
+    """
+    Generates DeepCAVE run files for all DEHB runs under output_path.
+
+    :param output_path: the path to the output folder where the runs are
+    """
+    runs = fnmatch.filter(os.listdir(output_path), '*run_*')
+    if len(runs) > 0:
+        for run in runs:
+            _generate_deepcave_output(f'{output_path}/{run}')
+    else:
+        raise FileNotFoundError(f'No runs were found under {output_path}')
+
+
+def run_dehb(config: dict, output_path: str, format_for_deepcave=True):
     """
     Run DEHB on NAS-Bench-201 with the settings defined in the config dictionary
 
     :param config: the configuration for the optimization as a dictionary
     :param output_path: the directory to store the outputs in
+    :param format_for_deepcave: Whether to generate DeepCAVE run files besides the final output of this DEHB run
     """
-    output_path = create_run_id(output_path)
+    output_path = _create_run_id(output_path)
 
     cs = configure_nasbench201()
 
@@ -83,22 +116,7 @@ def run_dehb(config: dict, output_path: str):
         max_budget=config['dehb']['max_budget']
     )
 
-    analyze_run(output_path)
+    if format_for_deepcave:
+        _generate_deepcave_output(output_path)
 
 
-def create_run_id(output_path: str, append_name=True):
-    """
-    This makes sure that each DEHB run gets a separate run folder.
-
-    :param append_name: whether to append 'dehb_' in front of each run
-    :param output_path: the folder to output the results
-    :return: a new path having an id to distinguish this run from earlier ones
-    """
-    run_name = '/run_1'
-    runs = fnmatch.filter(os.listdir(output_path), '*run_*')
-    if len(runs) > 0:
-        next_id = np.max(np.array([run.split('_') for run in runs])[:, 1].astype(np.int)) + 1
-        run_name = f'/run_{next_id}'
-    if append_name:
-        run_name = '/DEHB-' + run_name[1:]
-    return output_path + run_name
