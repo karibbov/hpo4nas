@@ -23,7 +23,7 @@ dehb:
 
 re:
   datasets: [ 'cifar10', 'cifar100', 'imagenet' ]
-  predictors: [ 'mlp', 'none' ]
+  predictors: [ 'rf', 'none' ]
   seeds: [ 0, 1, 2 ]
 
 bananas:

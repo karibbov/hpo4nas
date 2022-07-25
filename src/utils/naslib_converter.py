@@ -171,7 +171,7 @@ class NASLibRun(Run):
         return run
 
 
-def convert_naslib(origin_path:str):
+def convert_run(origin_path: str):
 
     # get naslib run results
     naslib_results_path = Path(origin_path)
@@ -200,28 +200,35 @@ def convert_naslib(origin_path:str):
     run = NASLibRun.from_path(Path(naslib_results_path))
     run.save(output_path)
 
+
+def convert_naslib(config: dict):
+    for optimizer in config['optimizers']:
+        optimizer_config = config[optimizer]
+        for dataset in optimizer_config['datasets']:
+            for predictor in optimizer_config['predictors']:
+                for seed in optimizer_config['seeds']:
+                    run_path = f"run_{optimizer}/{dataset}/nas_predictors/nasbench201/{predictor}/{seed}"
+                    convert_run(run_path)
+                    shutil.rmtree(Path(run_path))
+
 if __name__ == "__main__":
 
-    # get naslib run results
-    # res_path = "src/optimizers/run/ImageNet16-120/nas_predictors/nasbench201/bayes_lin_reg/1"
-    # convert_naslib(res_path)
-    # res_path = "src/optimizers/run/ImageNet16-120/nas_predictors/nasbench201/gp/1"
-    # convert_naslib(res_path)
-    # res_path = "src/optimizers/run/ImageNet16-120/nas_predictors/nasbench201/rf/1"
-    # convert_naslib(res_path)
-    # res_path = "src/optimizers/run/ImageNet16-120/nas_predictors/nasbench201/none/0"
-    # convert_naslib(res_path)
-    # res_path = "src/optimizers/run/ImageNet16-120/nas_predictors/nasbench201/none/1"
-    # convert_naslib(res_path)
-    # res_path = "src/optimizers/run/ImageNet16-120/nas_predictors/nasbench201/none/2"
-    # convert_naslib(res_path)
+    config_re = {'datasets': ['cifar10', 'cifar100', 'ImageNet16-120'],
+                 'predictors': ['mlp', 'none'],
+                 'seeds': [0, 1, 2]}
+    config_bananas = {'datasets': ['cifar10', 'cifar100', 'ImageNet16-120'],
+                      'predictors': ['mlp', 'gp'],
+                      'seeds': [0, 1, 2]}
 
-    res_path = "run/cifar10/nas_predictors/nasbench201/none/0"
-    convert_naslib(res_path)
-    res_path = "run/cifar10/nas_predictors/nasbench201/none/1"
-    convert_naslib(res_path)
-    res_path = "run/cifar10/nas_predictors/nasbench201/none/2"
-    convert_naslib(res_path)
+    config = {'optimizers': ['re', 'bananas'], 're': config_re, 'bananas': config_bananas}
+
+    convert_naslib(config)
+    # res_path = "run/cifar10/nas_predictors/nasbench201/none/0"
+    # convert_naslib(res_path)
+    # res_path = "run/cifar10/nas_predictors/nasbench201/none/1"
+    # convert_naslib(res_path)
+    # res_path = "run/cifar10/nas_predictors/nasbench201/none/2"
+    # convert_naslib(res_path)
 
     # remove naslib run logs and data
-    shutil.rmtree(Path("./run/cifar10/nas_predictors/nasbench201/"))
+    # shutil.rmtree(Path("./run/cifar10/nas_predictors/nasbench201/"))

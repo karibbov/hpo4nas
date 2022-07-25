@@ -87,11 +87,22 @@ def run_naslib(config: dict, optimizer: str = 'bananas'):
     for dataset in config['datasets']:
         for predictor in config['predictors']:
             for seed in config['seeds']:
-                optimizer_config_path = f"./configs/config_{optimizer}_{dataset}_{predictor}_{seed}.yaml"
+                optimizer_config_path = f"./../../configs/config_{optimizer}_{dataset}_{predictor}_{seed}.yaml"
                 print(optimizer_config_path)
                 run_optimizer(optimizer_config_path, OPTIMIZER[optimizer])
 
 if __name__ == "__main__":
+
+    config_re = {'datasets': ['cifar10', 'cifar100', 'imagenet'],
+                 'predictors': ['mlp', 'none'],
+                 'seeds': [0, 1, 2]}
+    config_bananas = {'datasets': ['cifar10', 'cifar100', 'imagenet'],
+                      'predictors': ['mlp', 'gp'],
+                      'seeds': [0, 1, 2]}
+    config_dict = {'re': config_re, 'bananas': config_bananas}
+
+    # run_naslib(config_dict, 'bananas')
+    run_naslib(config_dict, 're')
     # config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_re_imagenet_none_0.yaml"
     # run_optimizer(config_path, RegularizedEvolution)
     # config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_re_imagenet_none_1.yaml"
@@ -104,9 +115,9 @@ if __name__ == "__main__":
     # run_optimizer(config_path, Bananas)
     # config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_bananas_imagenet_rf_1.yaml"
     # run_optimizer(config_path, Bananas)
-    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_rs_none_0.yaml"
-    run_optimizer(config_path, RandomSearch)
-    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_rs_none_1.yaml"
-    run_optimizer(config_path, RandomSearch)
-    config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_rs_none_2.yaml"
-    run_optimizer(config_path, RandomSearch)
+    # config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_rs_none_0.yaml"
+    # run_optimizer(config_path, RandomSearch)
+    # config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_rs_none_1.yaml"
+    # run_optimizer(config_path, RandomSearch)
+    # config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_rs_none_2.yaml"
+    # run_optimizer(config_path, RandomSearch)
