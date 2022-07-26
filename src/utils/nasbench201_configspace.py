@@ -140,6 +140,35 @@ def op_indices2config(op_indices: Union[List[Union[int, str]], str]) -> Configur
     return config
 
 
+def cherry_pick(op_names: List[str]):
+    """
+    Pick a specific architecture from the configuration space of nasbench201. Given a list of operation names, it sets
+    each edge of the architecture to the respective operation name.
+
+    :param op_names: A list of 6 values from: ["Identity", "Zero", "ReLUConvBN3x3", "ReLUConvBN1x1", "AvgPool3x3"]
+    :return: The Configuration object with the given operations
+    """
+    cs = configure_nasbench201()
+    _, ops = _nasbench201_parameters()
+    arch = cs.sample_configuration()
+    for op, op_value in zip(ops, op_names):
+        arch[op] = op_value
+    return arch
+
+
+def get_arch_performance(op_names: List[str], config: dict, epoch=199):
+    """
+    Cherry-pick an architecture and query its performance on the benchmark
+
+    :param epoch: The amount of epochs to train the architecture for on the dataset
+    :param config: the configuration as dictionary containing the dataset to evaluate the architecture on
+    :param op_names: A list of 6 values from: ["Identity", "Zero", "ReLUConvBN3x3", "ReLUConvBN1x1", "AvgPool3x3"]
+    :return: Performance of the architecture defined by the op_names on the dataset, trained up to the given epochs
+    """
+    arch = cherry_pick(op_names)
+    return query_nasbench201(arch, config['dataset'], 199)
+
+
 def nasbench201_random_query(search_space, configspace, dataset):
     """
     Samples a random configuration from NAS-Bench-201 and queries the evaluation results from the benchmark
