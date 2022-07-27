@@ -5,7 +5,7 @@ from src.utils.nasbench201_configspace import get_arch_performance
 
 if __name__ == "__main__":
     config = load_yaml_config("../../configs/config.yaml")
-    arch = ["ReLUConvBN3x3", "ReLUConvBN3x3", "Identity", "AvgPool3x3", "ReLUConvBN3x3"]
+    arch = ["ReLUConvBN3x3", "ReLUConvBN3x3", "Identity", "AvgPool3x3", "Zero", "ReLUConvBN3x3"]
     train_loss, val_loss, test_loss, train_regret, val_regret, test_regret, train_time = get_arch_performance(arch,
                                                                                                               config)
     print(f'train_loss: {train_loss}\n'

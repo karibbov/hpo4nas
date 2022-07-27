@@ -208,17 +208,17 @@ def _query(model: NasBench201SearchSpace, dataset: str, dataset_api, epoch: int)
     train_acc = model.query(Metric.TRAIN_ACCURACY, dataset=dataset, dataset_api=dataset_api, epoch=epoch)
     train_regret = 100 - train_acc
     valid_acc = model.query(Metric.VAL_ACCURACY, dataset=dataset, dataset_api=dataset_api, epoch=epoch)
-    valid_regret = optimal_nasbench201_performance()[dataset + "_val_acc"] - valid_acc
+    valid_regret = 100 - valid_acc
     if epoch == 199:
         test_acc = model.query(Metric.TEST_ACCURACY, dataset=dataset, dataset_api=dataset_api, epoch=-1)
-        test_regret = optimal_nasbench201_performance()[dataset + "_test_acc"] - test_acc
+        test_regret = 100 - test_acc
     else:
         test_regret = valid_regret
 
     train_time = model.query(Metric.TRAIN_TIME, dataset=dataset, dataset_api=dataset_api, epoch=epoch)
     # simulate training time for the specific epoch
     train_time *= (epoch+1)/200
-
+    print(f"Validation Regret: {valid_regret}")
     return train_loss, valid_loss, test_loss, train_regret, valid_regret, test_regret, train_time
 
 
@@ -298,3 +298,9 @@ def run_rs(config: dict, output_path: str):
     print(f"Total runtime: {wc_current_time - wc_start_time}")
     print(f"Number of completed function evaluations: {(idx+1) * len(budgets)}")
 
+if __name__ == "__main__":
+    # A simple test case
+    cs = configure_nasbench201()
+    sample = cs.sample_configuration()
+    results = query_nasbench201(sample, 'cifar0', -1)
+    print(results)
