@@ -44,17 +44,17 @@ class SMACRun(Run):
         # Read objectives
         # We have to define it ourselves, because we don't know the type of the objective
         # Only lock lower
-        objective1 = Objective("Cost", lower=0)
-        objective2 = Objective("Time", lower=0)
-        obj1 = Objective("Validation accuracy", lower=0, upper=100)
-        obj2 = Objective("Validation loss", lower=0, upper=100)
-        obj3 = Objective("Test accuracy", lower=0, upper=100)
-        obj4 = Objective("Test loss", lower=0, upper=100)
-        obj5 = Objective("Train accuracy", lower=0, upper=100)
-        obj6 = Objective("Train loss", lower=0, upper=100)
+        obj1 = Objective("Train loss", lower=0)
+        obj2 = Objective("Validation loss", lower=0)
+        obj3 = Objective("Test loss", lower=0)
+        obj4 = Objective("Train regret", lower=0, upper=100)
+        obj5 = Objective("Validation regret", lower=0, upper=100)
+        obj6 = Objective("Test regret", lower=0, upper=100)
         obj7 = Objective("Train time", lower=0)
-        obj8 = Objective("Seed")
-        objectives = [obj1, objective2, obj2, obj3, obj4, obj5, obj6, obj7]
+        objectives = [obj1, obj2, obj3, obj4, obj5, obj6, obj7]
+        #objectives = [objective1, objective2]
+
+        #objectives = [obj4, obj5]
 
         # Read meta
         # Everything else is ignored
@@ -75,43 +75,44 @@ class SMACRun(Run):
 
         # Let's create a new run object
         run = SMACRun(
-            name=path.stem, configspace=configspace, objectives=objectives, meta=meta
+            name=path.stem, configspace=configspace, objectives=objectives, meta={}
         )
 
         # We have to set the path manually
         run._path = path
 
-        # Iterate over the runhistory
+        # Iterate over custom runhistory produced with extended smac trainer
         with (path / "runhistory.json").open() as json_file:
             all_data = json.load(json_file)
             data = all_data["data"]
             config_origins = all_data["config_origins"]
             configs = all_data["configs"]
 
-        with (path / "run_history.json").open() as json_file:
+        # Iterate over the runhistory
+        with (path / "run_history.json").open("r") as json_file:
             listObj = json.load(json_file)
-            for instance in listObj:
-                train_acc = instance['train_acc']
-                val_acc = instance['val_acc']
-                test_acc = instance['test_acc']
-                train_loss = instance['train_loss']
-                val_loss = instance['val_loss']
-                test_loss = instance['test_loss']
-                train_time = instance['train_time']
-                budget = instance['budget']
 
         instance_ids = []
-
-        first_starttime = None
+        start_time = 0
         seeds = []
-        for (config_id, instance_id, seed, budget), (
-            cost,
-            time,
-            status,
-            starttime,
-            endtime,
-            additional_info,
-        ) in data:
+        for (info, details), (d) in zip(data, listObj):
+            config_id = info[0]
+            instance_id = info[1]
+            seed = info[2]
+            budget = info[3]
+
+            # cost = details[0]
+            status = details[2]
+            additional_info = details[5]
+            train_regret = d['train_acc']
+            valid_regret = d['val_acc']
+            test_regret = d['test_acc']
+            train_loss = d['train_loss']
+            valid_loss = d['val_loss']
+            test_loss = d['test_loss']
+            train_time = d['train_time']
+            #budget = d['budget']
+
             if instance_id not in instance_ids:
                 instance_ids += [instance_id]
 
@@ -126,12 +127,6 @@ class SMACRun(Run):
 
             if len(seeds) > 1:
                 raise RuntimeError("Multiple seeds are not supported.")
-
-            if first_starttime is None:
-                first_starttime = starttime
-
-            starttime = starttime - first_starttime
-            endtime = endtime - first_starttime
 
             status = status["__enum__"]
 
@@ -148,31 +143,20 @@ class SMACRun(Run):
             else:
                 status = Status.CRASHED
 
-            if status != Status.SUCCESS:
-                # We don't want cost included which are failed
-                cost = None
-                time = None
-            else:
-                time = endtime - starttime
-
             # Round budget
             budget = round(budget)
+            endtime = start_time + train_time
 
             run.add(
-                costs=[val_acc, time,
-                       val_loss,
-                       test_acc,
-                       test_loss,
-                       train_acc,
-                       train_loss,
-                       train_time],
+                costs=[train_loss, valid_loss, test_loss, train_regret, valid_regret, test_regret, train_time],
                 config=config,
                 budget=budget,
-                start_time=starttime,
+                start_time=start_time,
                 end_time=endtime,
-                status=status,
                 origin=config_origins[config_id],
-                additional=seed,
+                additional=additional_info,
             )
+            start_time = endtime
 
         return run
+
