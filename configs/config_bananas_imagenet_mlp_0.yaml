@@ -1,6 +1,6 @@
 dataset: ImageNet16-120
 optimizer: bananas
-out_dir: ../../run
+out_dir: ../../run_bananas
 search:
   acq_fn_optimization: random_sampling
   acq_fn_type: its

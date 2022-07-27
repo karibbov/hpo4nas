@@ -214,13 +214,13 @@ def convert_naslib(config: dict):
 if __name__ == "__main__":
 
     config_re = {'datasets': ['cifar10', 'cifar100', 'ImageNet16-120'],
-                 'predictors': ['mlp', 'none'],
-                 'seeds': [0, 1, 2]}
+                 'predictors': ['none'],
+                 'seeds': [3, 4]}
     config_bananas = {'datasets': ['cifar10', 'cifar100', 'ImageNet16-120'],
                       'predictors': ['mlp', 'gp'],
                       'seeds': [0, 1, 2]}
 
-    config = {'optimizers': ['re', 'bananas'], 're': config_re, 'bananas': config_bananas}
+    config = {'optimizers': ['re'], 're': config_re, 'bananas': config_bananas}
 
     convert_naslib(config)
     # res_path = "run/cifar10/nas_predictors/nasbench201/none/0"

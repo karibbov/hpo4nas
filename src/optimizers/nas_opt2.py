@@ -94,8 +94,8 @@ def run_naslib(config: dict, optimizer: str = 'bananas'):
 if __name__ == "__main__":
 
     config_re = {'datasets': ['cifar10', 'cifar100', 'imagenet'],
-                 'predictors': ['mlp', 'none'],
-                 'seeds': [0, 1, 2]}
+                 'predictors': ['none'],
+                 'seeds': [3, 4]}
     config_bananas = {'datasets': ['cifar10', 'cifar100', 'imagenet'],
                       'predictors': ['mlp', 'gp'],
                       'seeds': [0, 1, 2]}
