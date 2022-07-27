@@ -1,0 +1,86 @@
+{
+  "hyperparameters": [
+    {
+      "name": "op_0",
+      "type": "categorical",
+      "choices": [
+        "Identity",
+        "Zero",
+        "ReLUConvBN3x3",
+        "ReLUConvBN1x1",
+        "AvgPool3x3"
+      ],
+      "default": "Identity",
+      "probabilities": null
+    },
+    {
+      "name": "op_1",
+      "type": "categorical",
+      "choices": [
+        "Identity",
+        "Zero",
+        "ReLUConvBN3x3",
+        "ReLUConvBN1x1",
+        "AvgPool3x3"
+      ],
+      "default": "Identity",
+      "probabilities": null
+    },
+    {
+      "name": "op_2",
+      "type": "categorical",
+      "choices": [
+        "Identity",
+        "Zero",
+        "ReLUConvBN3x3",
+        "ReLUConvBN1x1",
+        "AvgPool3x3"
+      ],
+      "default": "Identity",
+      "probabilities": null
+    },
+    {
+      "name": "op_3",
+      "type": "categorical",
+      "choices": [
+        "Identity",
+        "Zero",
+        "ReLUConvBN3x3",
+        "ReLUConvBN1x1",
+        "AvgPool3x3"
+      ],
+      "default": "Identity",
+      "probabilities": null
+    },
+    {
+      "name": "op_4",
+      "type": "categorical",
+      "choices": [
+        "Identity",
+        "Zero",
+        "ReLUConvBN3x3",
+        "ReLUConvBN1x1",
+        "AvgPool3x3"
+      ],
+      "default": "Identity",
+      "probabilities": null
+    },
+    {
+      "name": "op_5",
+      "type": "categorical",
+      "choices": [
+        "Identity",
+        "Zero",
+        "ReLUConvBN3x3",
+        "ReLUConvBN1x1",
+        "AvgPool3x3"
+      ],
+      "default": "Identity",
+      "probabilities": null
+    }
+  ],
+  "conditions": [],
+  "forbiddens": [],
+  "python_module_version": "0.4.21",
+  "json_format_version": 0.2
+}
