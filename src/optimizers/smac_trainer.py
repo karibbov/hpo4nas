@@ -57,12 +57,12 @@ class SmacTrainer(object):
         print("Validation Regret: %.4f" % val_regret)
 
         dictionary = {
-            "train_acc": train_regret,
-            "val_acc": val_regret,
-            "test_acc": test_regret,
             "train_loss": train_loss,
             "val_loss": val_loss,
             "test_loss": test_loss,
+            "train_regret": train_regret,
+            "val_regret": val_regret,
+            "test_regret": test_regret,
             "train_time": train_time,
             "budget": round(budget)
         }
