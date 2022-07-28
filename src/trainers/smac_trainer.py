@@ -1,7 +1,7 @@
 import os
 import sys
 
-from src.utils.nasbench201_configspace import query_nasbench201
+from nasbench201_configspace import query_nasbench201
 
 sys.path.append(os.path.join(os.getcwd(), '../nas201/'))
 
@@ -52,26 +52,29 @@ class SmacTrainer(object):
 
         """
         train_loss, val_loss, test_loss, train_regret, val_regret, test_regret, train_time = query_nasbench201(
-            arch, 'cifar10', round(budget))
+            arch, 'cifar10', int(budget))
 
         print("Validation Regret: %.4f" % val_regret)
 
         dictionary = {
+            "train_acc": train_regret,
+            "val_acc": val_regret,
+            "test_acc": test_regret,
             "train_loss": train_loss,
             "val_loss": val_loss,
             "test_loss": test_loss,
-            "train_regret": train_regret,
-            "val_regret": val_regret,
-            "test_regret": test_regret,
             "train_time": train_time,
-            "budget": round(budget)
+            "budget": int(budget)
         }
 
         # Read JSON file
         with open("run_history.json") as fp:
             listObj = json.load(fp)
 
-        listObj.append(dictionary)
+        if listObj is None:
+            listObj = [dictionary]
+        else:
+            listObj.append(dictionary)
 
         with open('run_history.json', 'w') as f:
             json.dump(listObj, f, indent=4, separators=(',', ': '))
