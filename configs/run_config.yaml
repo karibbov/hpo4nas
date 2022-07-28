@@ -4,7 +4,7 @@ search_space: 'nasbench201'
 datasets: ['cifar10', 'cifar100', 'ImageNet16-120']
 seed: 300
 output_root_dir: "results"
-n_runs: 3
+n_runs: 5
 convert_output_only_mode: False
 
 rs:
