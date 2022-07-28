@@ -1,7 +1,6 @@
 from naslib.optimizers import Bananas, RegularizedEvolution, RandomSearch
 from naslib.search_spaces import NasBench201SearchSpace as NB201
-from naslib.defaults.trainer import Trainer
-from src.utils.extended_Trainer import ExtendedTrainer
+from src.trainers.extended_Trainer import ExtendedTrainer
 import logging
 
 from naslib.utils import utils, setup_logger, get_dataset_api

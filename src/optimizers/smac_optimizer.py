@@ -1,5 +1,5 @@
 import json
-import smac_trainer
+from src.trainers import smac_trainer
 from functools import partial
 import numpy as np
 from nasbench201_configspace import configure_nasbench201 as CS

@@ -10,7 +10,6 @@ from naslib.utils import utils, setup_logger, get_dataset_api
 # import some utilities and parse the configuration file
 import logging
 
-
 # TODO clean things up
 # To avoid automatically running the code I put it in a function
 
@@ -48,7 +47,7 @@ if __name__ == "__main__":
     optimizer = Bananas(config)
 
     from naslib.defaults.trainer import Trainer
-    from src.utils.extended_Trainer import ExtendedTrainer
+    from src.trainers.extended_Trainer import ExtendedTrainer
 
     # since the optimizer has parsed the information of the search space, we do not need to pass the search
     # space object to the trainer when instantiating it.
@@ -61,3 +60,4 @@ if __name__ == "__main__":
     optimizer.adapt_search_space(search_space, dataset_api=dataset_api)
 
     trainer.search(report_incumbent=False)
+

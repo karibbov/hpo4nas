@@ -4,6 +4,8 @@ optimization.
 """
 import fnmatch
 import os
+from pathlib import Path
+
 import numpy as np
 from ConfigSpace import Configuration
 
@@ -17,8 +19,8 @@ def _target_function(cs_config: Configuration, budget: float, **kwargs):
     Interface for target function that DEHB optimizes. It is the problem that needs to be solved,
     or the function to be optimized
 
-    :param cs_config: the architecture to query defined as a ConfigSpace object
-    :param budget: the current epoch to query
+    :param: cs_config: the architecture to query defined as a ConfigSpace object
+    :param: budget: the current epoch to query
     :return: regret, training time and some additional information
     """
     budget = int(budget)
@@ -40,33 +42,34 @@ def _target_function(cs_config: Configuration, budget: float, **kwargs):
     return result
 
 
-def _create_run_id(output_path: str, add_prefix=True):
+def _create_run_id(output_path: Path, add_prefix=True):
     """
     This makes sure that each DEHB run gets a separate run folder with a unique name.
 
-    :param add_prefix: whether to prefix each run's folder name with 'DEHB-'
-    :param output_path: the folder to output the results
+    :param: add_prefix: whether to prefix each run's folder name with 'DEHB-'
+    :param: output_path: the folder to output the results
     :return: a new path having an id to distinguish this run from earlier ones
     """
-    run_name = '/run_1'
+    run_name = 'run_1'
     runs = fnmatch.filter(os.listdir(output_path), '*run*')
     if len(runs) > 0:
         next_id = np.max(np.array([run.split('_') for run in runs])[:, 1].astype(np.int)) + 1
-        run_name = f'/run_{next_id}'
+        run_name = f'run_{next_id}'
     if add_prefix:
-        run_name = f'/DEHB-{run_name[1:]}'
-    return output_path + run_name
+        run_name = f'DEHB-{run_name}'
+    return output_path / run_name
 
 
-def run_dehb(config: dict, output_path: str, format_for_deepcave=True):
+def run_dehb(run_config: dict, output_path: Path, dataset: str, format_for_deepcave=True):
     """
     Run DEHB on NAS-Bench-201 with the settings defined in the config dictionary
 
-    :param config: the configuration for the optimization as a dictionary
-    :param output_path: the directory to store the outputs in
-    :param format_for_deepcave: Whether to generate DeepCAVE run files besides the final output of this DEHB run
+    :param: dataset: the dataset as a string
+    :param: run_config: the configuration for the optimization as a dictionary
+    :param: output_path: the directory to store the outputs in
+    :param: format_for_deepcave: Whether to generate DeepCAVE run files besides the final output of this DEHB run
     """
-    output_path = _create_run_id(output_path)
+    output_path = _create_run_id(output_path=output_path)
 
     cs = configure_nasbench201()
 
@@ -74,22 +77,22 @@ def run_dehb(config: dict, output_path: str, format_for_deepcave=True):
         f=_target_function,
         cs=cs,
         dimensions=len(cs.get_hyperparameters()),
-        min_budget=config['dehb']['min_budget'],
-        max_budget=config['dehb']['max_budget'],
-        n_workers=config['dehb']['n_workers'],
+        min_budget=run_config['dehb']['min_budget'],
+        max_budget=run_config['dehb']['max_budget'],
+        n_workers=run_config['dehb']['n_workers'],
         output_path=output_path
     )
 
     trajectory, runtime, history = dehb.run(
-        total_cost=config['dehb']['wallclock'],
+        total_cost=run_config['dehb']['runtime_limit'],
         verbose=True,
         save_intermediate=False,
-        dataset=config['dataset'],
-        name=config['dehb']['name'],
-        max_budget=config['dehb']['max_budget']
+        dataset=dataset,
+        name=run_config['dehb']['name'],
+        max_budget=run_config['dehb']['max_budget']
     )
 
     if format_for_deepcave:
-        generate_deepcave_output(config, output_path)
+        generate_deepcave_output(run_config=run_config, output_path=output_path)
 
-
+    print(f'Output of the run saved under:\n{output_path}')
