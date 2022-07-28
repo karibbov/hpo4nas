@@ -1,10 +1,10 @@
 config_id: 0
-optimizer: 're'
+optimizer: 'rs'
 search_space: 'nasbench201'
-dataset: 'cifar10'
+datasets: ['cifar10', 'cifar100', 'ImageNet16-120']
 seed: 300
-output_path_root: "results"
-n_runs: 5
+output_root_dir: "results"
+n_runs: 3
 convert_output_only_mode: False
 
 rs:
@@ -15,9 +15,7 @@ rs:
 dehb:
   min_budget: 1
   max_budget: 199
-  brackets: 4
-  wallclock: 300
-  fevals: 300
+  runtime_limit: 300
   n_workers: 1
   name: dehb
 

@@ -4,14 +4,15 @@ This package is stores all functions dealing with configuration files or related
 import yaml
 
 
-def load_yaml_config(path_to_config: str):
+# TODO Using dict is not a scalable, think of another way, maybe load the config into a singleton or some object
+def load_yaml_config(path_to_settings: str):
     """
     Read and return the contents of a yaml file as a python dictionary.
 
-    :param path_to_config: the path to the configuration file
+    :param path_to_settings: the path to the file
     :return: dict representation of the yaml file
     """
-    with open(path_to_config, "r") as stream:
+    with open(path_to_settings, "r") as stream:
         try:
             return yaml.safe_load(stream)
         except yaml.YAMLError as exc:
