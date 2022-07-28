@@ -1,6 +1,0 @@
-op_0 categorical {Identity, Zero, ReLUConvBN3x3, ReLUConvBN1x1, AvgPool3x3} [Identity]
-op_1 categorical {Identity, Zero, ReLUConvBN3x3, ReLUConvBN1x1, AvgPool3x3} [Identity]
-op_2 categorical {Identity, Zero, ReLUConvBN3x3, ReLUConvBN1x1, AvgPool3x3} [Identity]
-op_3 categorical {Identity, Zero, ReLUConvBN3x3, ReLUConvBN1x1, AvgPool3x3} [Identity]
-op_4 categorical {Identity, Zero, ReLUConvBN3x3, ReLUConvBN1x1, AvgPool3x3} [Identity]
-op_5 categorical {Identity, Zero, ReLUConvBN3x3, ReLUConvBN1x1, AvgPool3x3} [Identity]

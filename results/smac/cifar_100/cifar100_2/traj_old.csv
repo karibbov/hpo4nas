@@ -1,0 +1,13 @@
+"CPU Time Used","Estimated Training Performance","Wallclock Time","Incumbent ID","Automatic Configurator (CPU) Time","Configuration..."
+0.000000, 2147483648.000000, 0.000224, 1, 0.000224, op_0=''Identity'', op_1=''AvgPool3x3'', op_2=''Identity'', op_3=''AvgPool3x3'', op_4=''Identity'', op_5=''Zero''
+1.033996, 90.950000, 1.057484, 1, 0.023488, op_0=''Identity'', op_1=''AvgPool3x3'', op_2=''Identity'', op_3=''AvgPool3x3'', op_4=''Identity'', op_5=''Zero''
+2.111518, 83.390000, 2.157574, 2, 0.046056, op_0=''Identity'', op_1=''Zero'', op_2=''Zero'', op_3=''ReLUConvBN1x1'', op_4=''Identity'', op_5=''Identity''
+30.829825, 79.630000, 37.225488, 3, 6.395663, op_0=''Identity'', op_1=''Zero'', op_2=''Zero'', op_3=''ReLUConvBN1x1'', op_4=''Identity'', op_5=''ReLUConvBN3x3''
+45.761730, 78.820000, 57.220305, 4, 11.458575, op_0=''Identity'', op_1=''Identity'', op_2=''Zero'', op_3=''ReLUConvBN1x1'', op_4=''Identity'', op_5=''ReLUConvBN3x3''
+50.403951, 72.920000, 62.909283, 5, 12.505332, op_0=''Identity'', op_1=''Identity'', op_2=''Zero'', op_3=''ReLUConvBN3x3'', op_4=''Identity'', op_5=''ReLUConvBN3x3''
+98.387389, 65.420000, 126.318931, 6, 27.931542, op_0=''Identity'', op_1=''Zero'', op_2=''Zero'', op_3=''ReLUConvBN3x3'', op_4=''Identity'', op_5=''ReLUConvBN3x3''
+101.004918, 64.930000, 128.998694, 7, 27.993776, op_0=''Identity'', op_1=''Identity'', op_2=''ReLUConvBN3x3'', op_3=''ReLUConvBN3x3'', op_4=''Identity'', op_5=''ReLUConvBN3x3''
+102.199559, 61.160000, 130.221073, 8, 28.021514, op_0=''Identity'', op_1=''Identity'', op_2=''Zero'', op_3=''ReLUConvBN1x1'', op_4=''Identity'', op_5=''ReLUConvBN3x3''
+132.994864, 49.530000, 161.715415, 9, 28.720551, op_0=''Identity'', op_1=''ReLUConvBN1x1'', op_2=''Zero'', op_3=''ReLUConvBN3x3'', op_4=''Identity'', op_5=''ReLUConvBN3x3''
+140.136246, 49.160000, 169.128021, 10, 28.991775, op_0=''Identity'', op_1=''Zero'', op_2=''Zero'', op_3=''ReLUConvBN3x3'', op_4=''Identity'', op_5=''ReLUConvBN3x3''
+143.538574, 43.130000, 172.612293, 11, 29.073719, op_0=''Identity'', op_1=''ReLUConvBN1x1'', op_2=''Zero'', op_3=''ReLUConvBN3x3'', op_4=''Identity'', op_5=''ReLUConvBN3x3''
