@@ -42,11 +42,14 @@ def _target_function(cs_config: Configuration, budget: float, **kwargs):
     return result
 
 
-def _create_run_id(output_path: Path, add_prefix=True):
+def _create_run_id(output_path: Path, add_prefix=False, budget=None):
     """
     This makes sure that each DEHB run gets a separate run folder with a unique name.
 
+    Warning: Do not use underscores '_' in the run folder's name, or in the given budget!
+
     :param: add_prefix: whether to prefix each run's folder name with 'DEHB-'
+    :param: budget: the maximum budget for the optimization (ex.: 2h, for two hours of wallclock time)
     :param: output_path: the folder to output the results
     :return: a new path having an id to distinguish this run from earlier ones
     """
@@ -57,6 +60,9 @@ def _create_run_id(output_path: Path, add_prefix=True):
         run_name = f'run_{next_id}'
     if add_prefix:
         run_name = f'DEHB-{run_name}'
+    if budget is not None:
+        run_name = f'{budget}-{run_name}'
+
     return output_path / run_name
 
 
@@ -69,7 +75,9 @@ def run_dehb(run_config: dict, output_path: Path, dataset: str, format_for_deepc
     :param: output_path: the directory to store the outputs in
     :param: format_for_deepcave: Whether to generate DeepCAVE run files besides the final output of this DEHB run
     """
-    output_path = _create_run_id(output_path=output_path)
+    output_path = _create_run_id(output_path=output_path,
+                                 add_prefix=True,
+                                 budget=f'{run_config["dehb"]["runtime_limit"]}min')
 
     cs = configure_nasbench201()
 
