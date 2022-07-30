@@ -46,7 +46,7 @@ def _create_run_id(output_path: Path, add_prefix=False, budget=None):
     """
     This makes sure that each DEHB run gets a separate run folder with a unique name.
 
-    Warning: Do not use underscores '_' in the run folder's name, or in the given budget!
+    Warning: Only a single underscore '_' is allowed in the run folder's name, so do not use one in the given budget!
 
     :param: add_prefix: whether to prefix each run's folder name with 'DEHB-'
     :param: budget: the maximum budget for the optimization (ex.: 2h, for two hours of wallclock time)
@@ -77,7 +77,7 @@ def run_dehb(run_config: dict, output_path: Path, dataset: str, format_for_deepc
     """
     output_path = _create_run_id(output_path=output_path,
                                  add_prefix=True,
-                                 budget=f'{run_config["dehb"]["runtime_limit"]}min')
+                                 budget=f'{int(run_config["dehb"]["runtime_limit"] / 60)}min')
 
     cs = configure_nasbench201()
 
