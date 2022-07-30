@@ -8,7 +8,6 @@ import numpy as np
 import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
 from ConfigSpace.configuration_space import Configuration, ConfigurationSpace
-from deepcave import Objective, Recorder
 from naslib.search_spaces import NasBench201SearchSpace
 from naslib.search_spaces.core.graph import Graph
 from naslib.utils import get_dataset_api
@@ -185,36 +184,31 @@ def nasbench201_random_query(search_space: NasBench201SearchSpace, cs: Configura
     return accuracy, cost
 
 
-def _query(model: NasBench201SearchSpace, dataset: str, dataset_api, epoch: int):
+def query(model: NasBench201SearchSpace, dataset: str, dataset_api, epoch: int):
     """
     Train the model on the dataset up to a certain epoch budget, and query its performance metrics on NAS-Bench-201
     benchmark.
 
     :param:model: the model whose performance to query
-    :param:dataset: the dataset, a string representation thereof, e.g.: 'cifar10'
+    :param:dataset: the dataset, a string representation thereof, choices: 'cifar10' 'cifar100', 'ImageNet16-120'
     :param:dataset_api: the dataset_api for nasbench201, as defined in NASlib
     :param:epoch: the epoch to query
     :return: train_loss, valid_loss, test_loss, train_regret, valid_regret, test_regret, train_time
     """
+
+    test_epoch = -1 if epoch == 199 else epoch
+
     train_loss = model.query(Metric.TRAIN_LOSS, dataset=dataset, dataset_api=dataset_api, epoch=epoch)
     valid_loss = model.query(Metric.VAL_LOSS, dataset=dataset, dataset_api=dataset_api, epoch=epoch)
-    if epoch == 199:
-        test_loss = model.query(Metric.TEST_LOSS, dataset=dataset, dataset_api=dataset_api, epoch=-1)
-    else:
-        # The true test loss/regret is only defined for the architectures that have been fully trained for 200 epochs
-        test_loss = valid_loss
-
     train_acc = model.query(Metric.TRAIN_ACCURACY, dataset=dataset, dataset_api=dataset_api, epoch=epoch)
-    train_regret = 100 - train_acc
     valid_acc = model.query(Metric.VAL_ACCURACY, dataset=dataset, dataset_api=dataset_api, epoch=epoch)
-    valid_regret = 100 - valid_acc
-    if epoch == 199:
-        test_acc = model.query(Metric.TEST_ACCURACY, dataset=dataset, dataset_api=dataset_api, epoch=-1)
-        test_regret = 100 - test_acc
-    else:
-        test_regret = valid_regret
-
     train_time = model.query(Metric.TRAIN_TIME, dataset=dataset, dataset_api=dataset_api, epoch=epoch)
+    test_loss = model.query(Metric.TEST_LOSS, dataset=dataset, dataset_api=dataset_api, epoch=test_epoch)
+    test_acc = model.query(Metric.TEST_ACCURACY, dataset=dataset, dataset_api=dataset_api, epoch=test_epoch)
+
+    train_regret = 100 - train_acc
+    valid_regret = 100 - valid_acc
+    test_regret = 100 - test_acc
     # simulate training time for the specific epoch
     train_time *= (epoch+1)/200
 
@@ -237,74 +231,12 @@ def query_nasbench201(config: Configuration, dataset: str, epoch: int):
     model.set_op_indices(op_indices)
     dataset_api = get_dataset_api(search_space='nasbench201', dataset=dataset)
 
-    return _query(model, dataset, dataset_api, epoch)
-
-
-def run_rs(run_config: dict, output_path: Path, dataset: str):
-    """
-    Run random search on the search space where a specified number of models are trained on different budgets and
-    output the results in the DeepCAVE format.
-
-    :param: dataset: the dataset as a string
-    :param: run_config: the configuration storing the run's parameters
-    :param: output_path: the path to the output produced by deepcave
-    """
-    print(f'Configurations for random search: {run_config["rs"]}')
-    print('Random search is running, 1 dot = 1 sampled architecture')
-    cs = configure_nasbench201()
-
-    obj1 = Objective('Train loss', lower=0)
-    obj2 = Objective('Validation loss', lower=0)
-    obj3 = Objective('Test loss', lower=0)
-    obj4 = Objective('Train regret', lower=0, upper=100)
-    obj5 = Objective('Validation regret', lower=0, upper=100)
-    obj6 = Objective('Test regret', lower=0, upper=100)
-    obj7 = Objective('Train time', lower=0)
-    objectives = [obj1, obj2, obj3, obj4, obj5, obj6, obj7]
-
-    budgets = run_config['rs']['budgets']
-    runtime_limit = run_config['rs']['runtime_limit']
-    wc_start_time = time.time()
-    wc_current_time = time.time()
-    start_time = 0
-
-    with Recorder(cs, objectives=objectives, save_path=str(output_path)) as r:
-        sampled_configs = cs.sample_configuration(run_config['rs']['n_models_per_budget'])
-        # in case we sampled a single configuration only
-        if isinstance(sampled_configs, Configuration):
-            # list() will automatically convert the cs to op indices for some reason
-            temp = []
-            temp.append(sampled_configs)
-            sampled_configs = temp
-        idx = 0
-        while wc_current_time - wc_start_time < runtime_limit and idx < len(sampled_configs):
-            for budget in budgets:
-                r.start(sampled_configs[idx], budget, start_time=start_time)
-                train_loss, val_loss, test_loss, train_regret, val_regret, test_regret, train_time = query_nasbench201(
-                    sampled_configs[idx], dataset, budget)
-                # Simulate train time
-                end_time = start_time + train_time
-                r.end(costs=[train_loss,
-                             val_loss,
-                             test_loss,
-                             train_regret,
-                             val_regret,
-                             test_regret,
-                             train_time],
-                      end_time=end_time)
-                wc_current_time = time.time()
-                start_time = end_time
-                print('.', end='')
-            idx = idx + 1
-    print(f'Completed random search run')
-    print(f'Total runtime: {wc_current_time - wc_start_time}')
-    print(f'Number of completed function evaluations: {(idx+1) * len(budgets)}')
-    print(f'Output of the run saved under:\n{output_path}')
+    return query(model, dataset, dataset_api, epoch)
 
 
 if __name__ == '__main__':
     # A simple test case
     config_space = configure_nasbench201()
     sample = config_space.sample_configuration()
-    results = query_nasbench201(sample, 'cifar10', -1)
+    results = query_nasbench201(sample, 'cifar10', 199)
     print(results)
