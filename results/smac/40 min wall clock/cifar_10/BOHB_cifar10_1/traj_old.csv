@@ -1,0 +1,13 @@
+"CPU Time Used","Estimated Training Performance","Wallclock Time","Incumbent ID","Automatic Configurator (CPU) Time","Configuration..."
+0.000000, 2147483648.000000, 0.000233, 1, 0.000233, op_0=''Identity'', op_1=''Identity'', op_2=''ReLUConvBN1x1'', op_3=''ReLUConvBN1x1'', op_4=''Zero'', op_5=''Zero''
+1.124208, 57.340000, 1.149374, 1, 0.025166, op_0=''Identity'', op_1=''Identity'', op_2=''ReLUConvBN1x1'', op_3=''ReLUConvBN1x1'', op_4=''Zero'', op_5=''Zero''
+9.323123, 50.000000, 9.550185, 2, 0.227062, op_0=''Identity'', op_1=''ReLUConvBN3x3'', op_2=''Identity'', op_3=''ReLUConvBN1x1'', op_4=''ReLUConvBN3x3'', op_5=''ReLUConvBN1x1''
+11.995617, 44.392000, 12.691966, 3, 0.696348, op_0=''ReLUConvBN3x3'', op_1=''ReLUConvBN1x1'', op_2=''Identity'', op_3=''ReLUConvBN1x1'', op_4=''ReLUConvBN3x3'', op_5=''ReLUConvBN1x1''
+13.325412, 41.144000, 14.416569, 4, 1.091158, op_0=''ReLUConvBN3x3'', op_1=''ReLUConvBN1x1'', op_2=''Identity'', op_3=''Identity'', op_4=''ReLUConvBN3x3'', op_5=''Identity''
+22.401963, 35.092000, 27.283717, 5, 4.881754, op_0=''ReLUConvBN3x3'', op_1=''ReLUConvBN3x3'', op_2=''Identity'', op_3=''Identity'', op_4=''ReLUConvBN3x3'', op_5=''Identity''
+103.790968, 28.096000, 131.639690, 6, 27.848722, op_0=''Identity'', op_1=''ReLUConvBN3x3'', op_2=''Identity'', op_3=''Identity'', op_4=''ReLUConvBN1x1'', op_5=''ReLUConvBN3x3''
+114.462648, 24.024000, 142.556291, 7, 28.093644, op_0=''Identity'', op_1=''ReLUConvBN3x3'', op_2=''Zero'', op_3=''Identity'', op_4=''Identity'', op_5=''ReLUConvBN3x3''
+151.400318, 16.816000, 180.335890, 8, 28.935571, op_0=''ReLUConvBN3x3'', op_1=''ReLUConvBN1x1'', op_2=''Identity'', op_3=''Identity'', op_4=''ReLUConvBN3x3'', op_5=''Identity''
+152.674973, 16.620000, 181.640100, 9, 28.965127, op_0=''ReLUConvBN3x3'', op_1=''ReLUConvBN3x3'', op_2=''Identity'', op_3=''Identity'', op_4=''ReLUConvBN3x3'', op_5=''Identity''
+222.116183, 8.680000, 266.732843, 10, 44.616660, op_0=''ReLUConvBN3x3'', op_1=''Identity'', op_2=''Zero'', op_3=''ReLUConvBN3x3'', op_4=''ReLUConvBN3x3'', op_5=''Identity''
+234.270487, 8.280000, 281.839904, 11, 47.569417, op_0=''ReLUConvBN3x3'', op_1=''ReLUConvBN3x3'', op_2=''Identity'', op_3=''ReLUConvBN3x3'', op_4=''ReLUConvBN3x3'', op_5=''ReLUConvBN1x1''
