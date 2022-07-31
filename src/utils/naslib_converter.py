@@ -208,8 +208,9 @@ def convert_naslib(config: dict):
             for predictor in optimizer_config['predictors']:
                 for seed in optimizer_config['seeds']:
                     run_path = f"run_{optimizer}/{dataset}/nas_predictors/nasbench201/{predictor}/{seed}"
+                    print(f"Converting {run_path}")
                     convert_run(run_path)
-                    shutil.rmtree(Path(run_path))
+                    # shutil.rmtree(Path(run_path))
 
 if __name__ == "__main__":
 
@@ -219,8 +220,11 @@ if __name__ == "__main__":
     config_bananas = {'datasets': ['cifar10', 'cifar100', 'ImageNet16-120'],
                       'predictors': ['mlp', 'gp'],
                       'seeds': [0, 1, 2]}
+    config_npenas = {'datasets': ['cifar10', 'cifar100', 'ImageNet16-120'],
+                      'predictors': ['mlp', 'gp'],
+                      'seeds': [0, 1, 2]}
 
-    config = {'optimizers': ['re'], 're': config_re, 'bananas': config_bananas}
+    config = {'optimizers': ['npenas'], 're': config_re, 'bananas': config_bananas, 'npenas': config_npenas}
 
     convert_naslib(config)
     # res_path = "run/cifar10/nas_predictors/nasbench201/none/0"
