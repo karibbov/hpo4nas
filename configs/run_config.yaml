@@ -1,10 +1,10 @@
 config_id: 0
-optimizer: 'rs'
+optimizer: 'npenas'
 search_space: 'nasbench201'
-datasets: ['cifar10', 'cifar100', 'ImageNet16-120']
+datasets: ['cifar10']
 seed: 300
 output_root_dir: "results"
-n_runs: 5
+n_runs: 1
 convert_output_only_mode: False
 
 rs:
@@ -28,6 +28,11 @@ bananas:
   datasets: [ 'cifar10', 'cifar100', 'imagenet' ]
   predictors: [ 'gp', 'mlp' ]
   seeds: [ 0, 1, 2 ]
+
+npenas:
+  datasets: [ 'imagenet' ]
+  predictors: [ 'gp' ]
+  seeds: [ 0, 1, 2]
 
 smac:
   smac_specific_config_should_go_here: None

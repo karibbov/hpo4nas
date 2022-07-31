@@ -7,11 +7,11 @@ from pathlib import Path
 import numpy as np
 
 from constants import APP_ROOT_DIR
-from src.optimizers.dehb_optimizer import run_dehb
+# from src.optimizers.dehb_optimizer import run_dehb
 from src.optimizers.nas_opt2 import run_naslib
 from src.utils.run_config import load_yaml_config
-from src.optimizers.random_search_optimizer import run_rs
-from src.utils.output_generator import generate_only_outputs_for_deepcave
+# from src.optimizers.random_search_optimizer import run_rs
+# from src.utils.output_generator import generate_only_outputs_for_deepcave
 
 
 def run_optimizer(run_config: dict):
@@ -46,6 +46,7 @@ def run_optimizer(run_config: dict):
             elif optimizer == 're':
                 run_naslib(run_config, optimizer)
             elif optimizer == 'npenas':
+                print(number_of_runs)
                 run_naslib(run_config, optimizer)
             elif optimizer == 'bananas':
                 run_naslib(run_config, optimizer)

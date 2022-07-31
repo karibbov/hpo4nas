@@ -1,6 +1,6 @@
 %%bash
-optimizer=bananas
-predictors=(bayes_lin_reg mlp gp rf xgb none)
+optimizer=npenas
+predictors=(mlp gp)
 
 start_seed=0
 
@@ -8,12 +8,12 @@ start_seed=0
 # this supposes your location is at NASLib/docs. Change the base_file location based on where you
 # opened the notebook
 base_file=./NASLib
-save_dir=run
+save_dir=run_npenas
 out_dir=$save_dir
 
 # search space / data:
 search_space=nasbench201
-dataset=cifar10
+dataset=ImageNet16-120
 #ImageNet16-120
 search_epochs=300
 

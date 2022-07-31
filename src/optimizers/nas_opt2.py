@@ -1,13 +1,15 @@
-from naslib.optimizers import Bananas, RegularizedEvolution, RandomSearch
+from constants import APP_ROOT_DIR
+import pathlib
+from naslib.optimizers import Bananas, RegularizedEvolution, RandomSearch, Npenas
 from naslib.search_spaces import NasBench201SearchSpace as NB201
 from src.trainers.extended_Trainer import ExtendedTrainer
 import logging
 
 from naslib.utils import utils, setup_logger, get_dataset_api
 from naslib.utils.utils import parse_args
-from naslib.search_spaces.core.query_metrics import Metric
+from src.utils.nasbench201_configspace import query
 
-OPTIMIZER = {"re": RegularizedEvolution, "rs": RandomSearch, "bananas": Bananas}
+OPTIMIZER = {"re": RegularizedEvolution, "rs": RandomSearch, "bananas": Bananas, 'npenas': Npenas}
 
 
 def train_statistics_extended(self, report_incumbent=True):
@@ -22,29 +24,9 @@ def train_statistics_extended(self, report_incumbent=True):
             except AttributeError:
                 best_arch = self.train_data[-1].arch
 
-    return (
-        best_arch.query(
-            Metric.TRAIN_ACCURACY, self.dataset, dataset_api=self.dataset_api
-        ),
-        best_arch.query(
-            Metric.VAL_ACCURACY, self.dataset, dataset_api=self.dataset_api
-        ),
-        best_arch.query(
-            Metric.TEST_ACCURACY, self.dataset, dataset_api=self.dataset_api
-        ),
-        best_arch.query(
-            Metric.TRAIN_TIME, self.dataset, dataset_api=self.dataset_api
-        ),
-        best_arch.query(
-            Metric.TRAIN_LOSS, self.dataset, dataset_api=self.dataset_api
-        ),
-        best_arch.query(
-            Metric.VAL_LOSS, self.dataset, dataset_api=self.dataset_api
-        ),
-        best_arch.query(
-            Metric.TEST_LOSS, self.dataset, dataset_api=self.dataset_api
-        ),
-    )
+    results = (query(best_arch, self.dataset, dataset_api=self.dataset_api, epoch=199))
+
+    return results
 
 
 def run_optimizer(config_file="../configs/config_bananas_none_0.yaml",
@@ -86,22 +68,25 @@ def run_naslib(config: dict, optimizer: str = 'bananas'):
     for dataset in config['datasets']:
         for predictor in config['predictors']:
             for seed in config['seeds']:
-                optimizer_config_path = f"./../../configs/config_{optimizer}_{dataset}_{predictor}_{seed}.yaml"
+                optimizer_config_path = str(pathlib.Path(APP_ROOT_DIR, "configs" , f"config_{optimizer}_{dataset}_{predictor}_{seed}.yaml"))
                 print(optimizer_config_path)
                 run_optimizer(optimizer_config_path, OPTIMIZER[optimizer])
 
 if __name__ == "__main__":
 
-    config_re = {'datasets': ['cifar10', 'cifar100', 'imagenet'],
+    config_re = {'datasets': ['cifar100'],
                  'predictors': ['none'],
-                 'seeds': [3, 4]}
+                 'seeds': [5]}
     config_bananas = {'datasets': ['cifar10', 'cifar100', 'imagenet'],
                       'predictors': ['mlp', 'gp'],
                       'seeds': [0, 1, 2]}
-    config_dict = {'re': config_re, 'bananas': config_bananas}
+    config_npenas = {'datasets': ['imagenet'],
+                      'predictors': ['gp'],
+                      'seeds': [0, 1, 2]}
+    config_dict = {'re': config_re, 'bananas': config_bananas, 'npenas': config_npenas}
 
     # run_naslib(config_dict, 'bananas')
-    run_naslib(config_dict, 're')
+    run_naslib(config_dict, 'npenas')
     # config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_re_imagenet_none_0.yaml"
     # run_optimizer(config_path, RegularizedEvolution)
     # config_path = "/home/samir/Desktop/F/Uni-Freiburg/DL lab/hpo4nas/configs/config_re_imagenet_none_1.yaml"
