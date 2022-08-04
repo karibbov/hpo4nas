@@ -2,7 +2,7 @@ import time
 from pathlib import Path
 from deepcave import Objective, Recorder
 from ConfigSpace.configuration_space import Configuration
-from src.utils.nasbench201_configspace import configure_nasbench201
+from src.utils.nasbench201_configspace import configure_nasbench201, query_nasbench201
 
 
 def run_rs(run_config: dict, output_path: Path, dataset: str):
@@ -45,10 +45,12 @@ def run_rs(run_config: dict, output_path: Path, dataset: str):
         while wc_current_time - wc_start_time < runtime_limit and idx < len(sampled_configs):
             for budget in budgets:
                 r.start(sampled_configs[idx], budget, start_time=start_time)
+                search_start_time = time.time()
                 train_loss, val_loss, test_loss, train_regret, val_regret, test_regret, train_time = query_nasbench201(
                     sampled_configs[idx], dataset, budget)
+                search_end_time = time.time()
                 # Simulate train time
-                end_time = start_time + train_time
+                end_time = start_time + train_time + (search_end_time - search_start_time)
                 r.end(costs=[train_loss,
                              val_loss,
                              test_loss,
